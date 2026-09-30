@@ -11,6 +11,7 @@ import FocusTimeline from './focus-timeline';
 import type { Vec3 } from '@/lib/focus-timeline';
 import type { Patient, StudyRecord } from './library-workspace';
 import { displayDate } from '@/lib/dates';
+import { ONLINE, studyUrl, volumeUrl } from '@/lib/online';
 
 import {
   Orbit,
@@ -97,9 +98,7 @@ const sliceNames = ['Axial', 'Coronal', 'Sagittal'];
 function rangeValue(value: number | readonly number[]) {
   return Array.isArray(value) ? value[0] : (value as number);
 }
-function assetUrl(url: string) {
-  return url.startsWith('/api/') ? url : `/api/${url.replace(/^\//, '')}`;
-}
+const assetUrl = volumeUrl;
 function measure(values: number[] | undefined) {
   return values?.map((v) => Number(v.toFixed(2))).join(' × ') ?? '—';
 }
@@ -115,6 +114,7 @@ export default function Viewer({
   onEdit,
   onHome,
   initialStudy,
+  initialLearn = false,
 }: {
   patient: Patient;
   studies: StudyRecord[];
@@ -126,9 +126,11 @@ export default function Viewer({
   onHome: () => void;
   /** Study to open first; defaults to the first study of the patient. */
   initialStudy?: string;
+  /** Opens learning mode on arrival (the online demo). */
+  initialLearn?: boolean;
 }) {
   const [overviewOpen, setOverviewOpen] = useState(false);
-  const [learnOpen, setLearnOpen] = useState(false);
+  const [learnOpen, setLearnOpen] = useState(initialLearn);
   // Clicks and scrolls on the slices. The quiz counts only these as answers;
   // the focus also moves on resize and after loads.
   const [sliceInput, setSliceInput] = useState(0);
@@ -201,7 +203,7 @@ export default function Viewer({
 
   useEffect(() => {
     let active = true;
-    fetch(`/api/library/studies/${encodeURIComponent(studyKey)}`)
+    fetch(studyUrl(studyKey))
       .then((r) => {
         if (!r.ok) throw new Error('Study not found in the local library.');
         return r.json() as Promise<Manifest>;
@@ -695,6 +697,16 @@ export default function Viewer({
         out.toBlob(resolve, 'image/png'),
       );
       if (!blob) throw new Error('PNG encoding failed');
+      if (ONLINE) {
+        // No server online: the snapshot goes to the visitor's downloads.
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `OpenMRI-${seriesName(study).replace(/[^\w+-]+/g, '-')}.png`;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(link.href), 10_000);
+        setToast('PNG downloaded');
+        return;
+      }
       const response = await fetch('/api/captures', {
         method: 'POST',
         headers: { 'Content-Type': 'image/png' },
@@ -724,17 +736,26 @@ export default function Viewer({
         />
       )}
       <header className="topbar">
-        <button
-          className="brand"
-          onClick={onHome}
-          aria-label="Back to the welcome screen"
-          title="Welcome screen"
-        >
-          <Orbit strokeWidth={1.25} />
-          <span>
-            OPENMRI<small>LOCAL MRI VIEWER</small>
-          </span>
-        </button>
+        {ONLINE ? (
+          <div className="brand">
+            <Orbit strokeWidth={1.25} />
+            <span>
+              OPENMRI<small>ONLINE DEMO</small>
+            </span>
+          </div>
+        ) : (
+          <button
+            className="brand"
+            onClick={onHome}
+            aria-label="Back to the welcome screen"
+            title="Welcome screen"
+          >
+            <Orbit strokeWidth={1.25} />
+            <span>
+              OPENMRI<small>LOCAL MRI VIEWER</small>
+            </span>
+          </button>
+        )}
         <div className="study-header">
           <span className="status-dot" />
           Study viewer
@@ -742,29 +763,36 @@ export default function Viewer({
           <time>{studyDate}</time>
         </div>
         <div className="header-actions">
-          <button
-            className="header-toggle"
-            disabled={studies.length < 2}
-            title={
-              studies.length < 2
-                ? 'Import a second study date to compare over time'
-                : undefined
-            }
-            onClick={() => {
-              setRotate(false);
-              setTimelineOpen(true);
-            }}
-          >
-            <Crosshair size={17} /> Focus over time
-          </button>
-          <button className="export-button library-button" onClick={onLibrary}>
-            <FolderOpen size={17} />
-            <span>Library</span>
-          </button>
-          <button className="primary-action" onClick={onImport}>
-            <Upload size={16} />
-            <span>Import MRI</span>
-          </button>
+          {!ONLINE && (
+            <>
+              <button
+                className="header-toggle"
+                disabled={studies.length < 2}
+                title={
+                  studies.length < 2
+                    ? 'Import a second study date to compare over time'
+                    : undefined
+                }
+                onClick={() => {
+                  setRotate(false);
+                  setTimelineOpen(true);
+                }}
+              >
+                <Crosshair size={17} /> Focus over time
+              </button>
+              <button
+                className="export-button library-button"
+                onClick={onLibrary}
+              >
+                <FolderOpen size={17} />
+                <span>Library</span>
+              </button>
+              <button className="primary-action" onClick={onImport}>
+                <Upload size={16} />
+                <span>Import MRI</span>
+              </button>
+            </>
+          )}
           {isDemo && (
             <button
               className={`header-toggle ${learning ? 'active' : ''}`}
@@ -788,7 +816,8 @@ export default function Viewer({
             <CalendarDays size={17} /> History
           </button>
           <span className="local">
-            <ShieldCheck size={15} /> Runs locally
+            <ShieldCheck size={15} />{' '}
+            {ONLINE ? 'Runs in your browser' : 'Runs locally'}
           </span>
           <Dialog>
             <DialogTrigger
@@ -870,13 +899,15 @@ export default function Viewer({
         <aside className="controls" hidden={panelOpen}>
           <div className="control-heading">
             <span className="eyebrow">PATIENT</span>
-            <button
-              className="icon-button"
-              aria-label="Edit patient details"
-              onClick={onEdit}
-            >
-              <UserRound size={16} />
-            </button>
+            {!ONLINE && (
+              <button
+                className="icon-button"
+                aria-label="Edit patient details"
+                onClick={onEdit}
+              >
+                <UserRound size={16} />
+              </button>
+            )}
           </div>
           <select
             className="patient-select"

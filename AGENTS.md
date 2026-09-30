@@ -57,6 +57,9 @@ If something fails, read `.openmri-server.log` or run
 
 - Keep the server on `127.0.0.1`. It has no login. Never bind it to
   `0.0.0.0`, never tunnel it (ngrok, Cloudflare, SSH), never deploy it.
+- The only thing ever published online is the static demo build
+  (`npm run build:online`, `docs/online/README.md`): no server, no import, only
+  the demo study. Never add import, uploads, or API calls to it.
 - The data directory `.openmri/` holds medical images and personal details.
   Never commit it, upload it, paste its contents, or send it anywhere. Do not
   open the user's scans or read patient details unless they ask you to.

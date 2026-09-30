@@ -47,6 +47,10 @@ test yourself with find-it and multiple-choice quizzes. Two lessons compare
 T1, T2 and FLAIR side by side. All content is a **draft until a medical
 reviewer checks it**, and the app marks it so.
 
+**Try it online:** https://yairmcaudillo-cell.github.io/OpenMRI/ runs learning
+mode on the demo study in the browser, with nothing to install and no way to
+upload scans ([docs/online/README.md](docs/online/README.md)).
+
 [docs/learning-mode/README.md](docs/learning-mode/README.md) has the guide
 and screenshots; [AUTHORING.md](docs/learning-mode/AUTHORING.md) explains
 how to write and review lessons. Learning mode was added in this fork by Yair

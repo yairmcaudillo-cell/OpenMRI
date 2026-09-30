@@ -30,6 +30,10 @@ step 'python tests' npm run -s test:import
 if [[ $FAST == 0 ]]; then
   step 'build' npm run -s build
   if has_script test:e2e; then step 'browser tests' npm run -s test:e2e; fi
+  if has_script build:online; then
+    step 'online build' npm run -s build:online
+    step 'online browser tests' npm run -s test:online
+  fi
 fi
 
 hygiene() {
