@@ -843,7 +843,12 @@ export default function Viewer({
         {learning && (
           <LearnPanel
             series={manifest?.series ?? []}
+            point={hasFocus && point ? point.mm : null}
+            loading={loading}
             onShow={showPoint}
+            onSeries={(id) => {
+              if (id !== selectedId) setSelectedId(id);
+            }}
             onClose={() => setLearnOpen(false)}
           />
         )}

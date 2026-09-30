@@ -287,3 +287,112 @@
   width: 15px;
   height: 15px;
 }
+/* Quiz */
+.lesson-mode {
+  margin: 16px 0 4px;
+}
+.quiz {
+  margin-top: 14px;
+}
+.quiz h3 {
+  margin: 10px 0 6px;
+  line-height: 1.4;
+}
+.quiz-progress,
+.quiz-best {
+  font-size: 11px !important;
+  color: #999 !important;
+}
+.quiz-result {
+  display: block;
+  font-size: 15px !important;
+  color: #fff !important;
+}
+.quiz-hint {
+  color: #bbb !important;
+}
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 12px 0;
+}
+.quiz-options button {
+  text-align: left;
+  padding: 10px 12px;
+  border: 1px solid #352947;
+  border-radius: 8px;
+  background: #100b18;
+  color: #eee;
+  font-size: 12px;
+  cursor: pointer;
+}
+.quiz-options button:disabled {
+  cursor: default;
+}
+.quiz-options button.right {
+  border-color: #5fbf8f;
+  background: #08170f;
+}
+.quiz-options button.right::after {
+  content: ' ✓ correct answer';
+  color: #a8f0c8;
+}
+.quiz-options button.wrong {
+  border-color: #ff8a70;
+  background: #1c0b07;
+}
+.quiz-options button.wrong::after {
+  content: ' ✕ your answer';
+  color: #ffb3a1;
+}
+.quiz-feedback {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+.quiz-feedback svg {
+  flex: none;
+  margin-top: 2px;
+}
+.quiz-feedback.right {
+  border: 1px solid #5fbf8f;
+  background: #08170f;
+  color: #cff5df;
+}
+.quiz-feedback.wrong {
+  border: 1px solid #ff8a70;
+  background: #1c0b07;
+  color: #ffd6cc;
+}
+.quiz-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.quiz-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid #352947;
+  border-radius: 8px;
+  background: transparent;
+  color: #ddd;
+  font-size: 12px;
+  cursor: pointer;
+}
+.quiz-actions .quiz-primary {
+  border-color: #8052ff;
+  background: #8052ff;
+  color: #fff;
+}
+.quiz-actions button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}

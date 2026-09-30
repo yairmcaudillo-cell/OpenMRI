@@ -14,12 +14,13 @@ import {
   lessonsFor,
   resolveSeries,
   type Lesson,
-  type Review,
   type Track,
   type Vec3,
 } from '@/lib/lessons';
 import { LESSONS } from '@/lib/lesson-catalog';
+import DraftBadge from './draft-badge';
 import GlossaryText from './glossary-text';
+import Quiz from './quiz';
 import { saveGlossary, saveTrack, savedGlossary, savedTrack } from './track';
 
 export type LearnSeries = {
@@ -34,24 +35,22 @@ const TRACK_HINTS: Record<Track, string> = {
   med: 'Preclinical neuroanatomy. More structures, anatomical detail and clinical relevance.',
 };
 
-export function DraftBadge({ review }: { review: Review }) {
-  return review.status === 'draft' ? (
-    <span className="draft-badge">Draft, not reviewed</span>
-  ) : (
-    <span className="reviewed-badge">
-      Reviewed by {review.reviewer}, {review.role}
-    </span>
-  );
-}
-
 export default function LearnPanel({
   series,
+  point,
+  loading,
   onShow,
+  onSeries,
   onClose,
 }: {
   series: LearnSeries[];
+  /** The viewer's focus in mm while visible; a new array on every move. */
+  point: number[] | null;
+  loading: boolean;
   /** Moves the focus to a point on a series (switching series if needed). */
   onShow: (seriesId: string, point: Vec3) => void;
+  /** Opens a series and keeps the current position. */
+  onSeries: (seriesId: string) => void;
   onClose: () => void;
 }) {
   // Only rendered after a click in the browser, so storage is readable here.
@@ -61,6 +60,7 @@ export default function LearnPanel({
   );
   const [lessonId, setLessonId] = useState('');
   const [landmarkId, setLandmarkId] = useState('');
+  const [quiz, setQuiz] = useState(false);
 
   const chooseTrack = (next: Track) => {
     setTrack(next);
@@ -139,6 +139,7 @@ export default function LearnPanel({
                   onClick={() => {
                     setLessonId(l.id);
                     setLandmarkId('');
+                    setQuiz(false);
                   }}
                 >
                   <span className="lesson-order">
@@ -192,7 +193,31 @@ export default function LearnPanel({
                 </p>
               )}
 
-              {landmark && (
+              <fieldset className="track-switch lesson-mode">
+                <legend>Lesson mode</legend>
+                <button aria-pressed={!quiz} onClick={() => setQuiz(false)}>
+                  Explore
+                </button>
+                <button aria-pressed={quiz} onClick={() => setQuiz(true)}>
+                  Quiz
+                </button>
+              </fieldset>
+
+              {quiz && (
+                <Quiz
+                  key={`${lesson.id}:${track}`}
+                  lesson={lesson}
+                  track={track}
+                  point={point}
+                  loading={loading}
+                  definitions={definitions}
+                  onStart={() => referenceId && onSeries(referenceId)}
+                  onShow={(p) => referenceId && onShow(referenceId, p)}
+                  onExit={() => setQuiz(false)}
+                />
+              )}
+
+              {!quiz && landmark && (
                 <article className="landmark-card" aria-live="polite">
                   <h3>{landmark.name}</h3>
                   <DraftBadge review={landmark.review} />
@@ -224,19 +249,21 @@ export default function LearnPanel({
                 </article>
               )}
 
-              <ol className="landmark-list" aria-label="Landmarks">
-                {landmarks.map((l) => (
-                  <li key={l.id}>
-                    <button
-                      aria-current={l.id === landmarkId ? 'true' : undefined}
-                      disabled={!referenceId}
-                      onClick={() => show(lesson, l.id)}
-                    >
-                      {l.name}
-                    </button>
-                  </li>
-                ))}
-              </ol>
+              {!quiz && (
+                <ol className="landmark-list" aria-label="Landmarks">
+                  {landmarks.map((l) => (
+                    <li key={l.id}>
+                      <button
+                        aria-current={l.id === landmarkId ? 'true' : undefined}
+                        disabled={!referenceId}
+                        onClick={() => show(lesson, l.id)}
+                      >
+                        {l.name}
+                      </button>
+                    </li>
+                  ))}
+                </ol>
+              )}
             </section>
           )}
         </>

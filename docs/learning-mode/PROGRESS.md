@@ -6,9 +6,9 @@ the start of every session.
 
 ## Current state
 
-- Phase: **4 complete**. Yair approved Phase 0 and asked for all phases to be
+- Phase: **5 complete**. Yair approved Phase 0 and asked for all phases to be
   completed in one run, without stopping at the intermediate 🧑 gates.
-- Next task: 5.3 quiz panel.
+- Next task: 6.1 sequence-compare lessons.
 - Branch: `claude/elegant-albattani-nifo57`.
 
 ## Decisions
@@ -241,3 +241,34 @@ Errors caught by the loop before commit:
 
 Deviation: task 4.1 (auto-matching) replaced by explicit links, as recorded
 in CP-1.
+
+### CP-5 · Quiz · 2026-09-30
+
+Gate: all green (browser 10/10)
+Acceptance: [x] FR-14 find questions: a click within the landmark's
+tolerance is correct; after answering, the marker shows the right place
+[x] FR-15 choice questions, with an optional landmark shown and an
+explanation [x] FR-16 questions per track; score at the end; best score per
+lesson and track kept in this browser only
+Look-back: Phases 0–4 re-run in the gate: green.
+
+The browser test answers like a student: it clicks the slice where the
+crosshair is (found from the pixels) for a right answer, reuses the spot for
+a wrong one and checks the jump to the answer, skips five questions, answers
+one choice right and one wrong, and checks "You got 2 of 9 right" and the
+saved best. Scoring rules themselves are unit-tested since Phase 1.
+
+Errors caught by the loop before commit:
+
+- Re-reading the component before running it: (1) starting a quiz can
+  switch series, and the reload's new focus point would have counted as the
+  student's click on question 1. The quiz now takes its "before" point when
+  the series finishes loading. (2) `quiz.tsx` and `learn-panel.tsx`
+  imported each other; `DraftBadge` moved to its own file. (3) A ref read
+  during render was replaced by state (React compiler rules).
+- Lint: status messages use `<output>` instead of `role="status"`.
+- The test's text match failed because a glossary link splits the sentence;
+  it now asserts on the visible text of the feedback.
+
+Deviation: added **Skip** (counts as wrong, still shows the answer), so a
+student is never stuck on a question.
