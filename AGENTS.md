@@ -18,7 +18,7 @@ When someone asks you to install, run, or open OpenMRI, do exactly this.
 2. Clone and start with the demo study:
 
    ```sh
-   git clone https://github.com/lev1nson/OpenMRI.git
+   git clone https://github.com/yairmcaudillo-cell/OpenMRI.git
    cd OpenMRI
    npm run demo
    ```

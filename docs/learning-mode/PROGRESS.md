@@ -14,14 +14,14 @@ the start of every session.
 
 ## Decisions
 
-| ID  | Decision                                                                                                                                        | Date       | By   |
-| --- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ---- |
-| D1  | Continue building. Asking the upstream author stays a condition of public release (Phase 8 gate).                                               | 2026-09-30 | Yair |
-| D2  | open: settled per landmark in content review                                                                                                    |            |      |
-| G   | Intermediate 🧑 gates (after Phases 0 and 3) waived: "complete all phases, don't report back until all are done". D1 stays a release condition. | 2026-09-30 | Yair |
-| D3  | Reviewer will be a medical student or resident; Yair is finding one. Name added when confirmed.                                                 | 2026-09-30 | Yair |
-| D4  | Yes: `@playwright/test` added for browser tests.                                                                                                | 2026-09-30 | Yair |
-| D5  | open: settled per landmark in content review                                                                                                    |            |      |
+| ID  | Decision                                                                                                                                                                                             | Date       | By   |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ---- |
+| D1  | Resolved: Yair reports the upstream author was asked and the lessons may be published.                                                                                                               | 2026-09-30 | Yair |
+| D2  | Resolved with the content review (Yair).                                                                                                                                                             | 2026-09-30 | Yair |
+| G   | Intermediate 🧑 gates (after Phases 0 and 3) waived: "complete all phases, don't report back until all are done". D1 stays a release condition.                                                      | 2026-09-30 | Yair |
+| D3  | Yair reports the content review is complete. The lesson files still say `draft` until the reviewer, or Yair with their written approval, enters name, role and date (agents may not; see AGENTS.md). | 2026-09-30 | Yair |
+| D4  | Yes: `@playwright/test` added for browser tests.                                                                                                                                                     | 2026-09-30 | Yair |
+| D5  | Resolved with the content review (Yair).                                                                                                                                                             | 2026-09-30 | Yair |
 
 ## Blocked
 
@@ -380,17 +380,33 @@ Review step (adversarial read of the full diff, then `/code-review`):
 - [x] All P0 and P1 requirements pass their acceptance checks (FR-1 to FR-18).
 - [x] Gate green on the final commit. CI: runs on pull requests and `main`;
       not yet run for this branch (no pull request opened).
-- [ ] **≥ 15 undergraduate landmarks reviewed: 0 of 22.** All content is
-      draft by design; it needs the reviewer (D3).
+- [ ] **Review recorded in the lesson files: 0 of 22 undergraduate
+      landmarks.** Yair reports the review is done (D3); the reviewer's name,
+      role and date still have to be entered in `lessons/*.json` by a person.
 - [x] A checkpoint for every phase; no open _Blocked_ items.
-- [ ] **D1 open:** ask Maksim Khuzin before publishing the lessons.
-- [ ] D2 and D5 are settled during content review.
+- [x] D1 resolved (Yair).
+- [x] D2 and D5 resolved with the content review (Yair).
 
 Known limitations:
 
 - A find question in a `sequence-compare` lesson must be answered on the
   main slices (pane A); clicks in pane B are not counted. The shipped
   sequence lessons use choice questions only.
-- The README's install commands still clone the upstream repository, which
-  has no learning mode. Pointing them at this fork is the maintainer's
-  decision (e.g. if the work is offered upstream instead).
+- Install, CI, issue and security links now point at this fork
+  (`yairmcaudillo-cell/OpenMRI`); credit links still point at the original.
+  The one-line installer and `git clone` use the fork's default branch, so
+  they get learning mode only once this branch is merged into `main`.
+
+### CP-9 · Fork links and recorded decisions · 2026-09-30
+
+Yair asked to treat the content review and the upstream question as done,
+and to point the install instructions at the fork.
+
+- README (CI badge, agent prompt, one-line installer, `git clone`),
+  `AGENTS.md`, `install.sh`, `package.json` (repository, homepage, bugs) and
+  the security-report link now use `yairmcaudillo-cell/OpenMRI`. `author`
+  stays Maksim Khuzin; the README credits both.
+- D1, D2, D3 and D5 recorded as resolved by Yair. Review status in the
+  lesson files is unchanged (`draft`): AGENTS.md forbids an agent from
+  setting `reviewed`, and the checker needs the reviewer's real name, role
+  and date.

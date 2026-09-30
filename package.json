@@ -6,11 +6,11 @@
   "author": "Maksim Khuzin",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lev1nson/OpenMRI.git"
+    "url": "git+https://github.com/yairmcaudillo-cell/OpenMRI.git"
   },
-  "homepage": "https://github.com/lev1nson/OpenMRI#readme",
+  "homepage": "https://github.com/yairmcaudillo-cell/OpenMRI#readme",
   "bugs": {
-    "url": "https://github.com/lev1nson/OpenMRI/issues"
+    "url": "https://github.com/yairmcaudillo-cell/OpenMRI/issues"
   },
   "keywords": [
     "mri",

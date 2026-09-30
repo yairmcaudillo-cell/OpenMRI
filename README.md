@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/lev1nson/OpenMRI/actions/workflows/ci.yml"><img src="https://github.com/lev1nson/OpenMRI/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+  <a href="https://github.com/yairmcaudillo-cell/OpenMRI/actions/workflows/ci.yml"><img src="https://github.com/yairmcaudillo-cell/OpenMRI/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-8052ff" alt="License: MIT"></a>
   <img src="https://img.shields.io/badge/node-%E2%89%A5%2022.13-5fa04e" alt="Node.js 22.13 or newer">
   <img src="https://img.shields.io/badge/python-3.12%E2%80%933.14-3776ab" alt="Python 3.12 to 3.14">
@@ -51,7 +51,9 @@ reviewer checks it**, and the app marks it so.
 and screenshots; [AUTHORING.md](docs/learning-mode/AUTHORING.md) explains
 how to write and review lessons. Learning mode was added in this fork by Yair
 ([@yairmcaudillo-cell](https://github.com/yairmcaudillo-cell)); OpenMRI itself
-is by Maksim Khuzin.
+is by Maksim Khuzin
+([lev1nson/OpenMRI](https://github.com/lev1nson/OpenMRI)). The install
+commands below use this fork, which includes learning mode.
 
 ## Requirements
 
@@ -75,7 +77,7 @@ Paste this into Claude Code, Codex, Cursor, or any agent that can run commands
 on your computer:
 
 ```text
-Clone https://github.com/lev1nson/OpenMRI, follow its AGENTS.md to install
+Clone https://github.com/yairmcaudillo-cell/OpenMRI, follow its AGENTS.md to install
 and start it with the demo study, and open it in my browser.
 ```
 
@@ -86,7 +88,7 @@ and start it with the demo study, and open it in my browser.
 On macOS or Linux:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/lev1nson/OpenMRI/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/yairmcaudillo-cell/OpenMRI/main/install.sh | bash
 ```
 
 On macOS the script installs missing Node.js, Python, and Git with Homebrew,
@@ -96,7 +98,7 @@ first. The app goes into `~/OpenMRI`. Run the same command again to update.
 ### By hand
 
 ```sh
-git clone https://github.com/lev1nson/OpenMRI.git
+git clone https://github.com/yairmcaudillo-cell/OpenMRI.git
 cd OpenMRI
 npm run demo    # install, build, start in the background, load the demo, open the browser
 ```
