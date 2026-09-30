@@ -10,7 +10,9 @@ import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
-const BASE = 'http://127.0.0.1:4173';
+// OPENMRI_PORT lets the browser tests load the demo into their own server.
+// The host stays 127.0.0.1.
+const BASE = `http://127.0.0.1:${Number(process.env.OPENMRI_PORT) || 4173}`;
 const ARCHIVE = path.join(
   import.meta.dirname,
   '..',
@@ -67,7 +69,7 @@ async function main() {
     .catch(() => null);
   if (health?.app !== 'openmri') {
     console.error(
-      'OpenMRI is not running on 127.0.0.1:4173. Run npm run demo, which starts it, or npm run up first.',
+      `OpenMRI is not running on ${BASE}. Run npm run demo, which starts it, or npm run up first.`,
     );
     process.exit(1);
   }
