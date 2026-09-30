@@ -577,10 +577,16 @@ export default function Viewer({
     } else if (loading) pendingBookmark.current = saved;
     else focusRef.current?.moveTo(saved.frac as [number, number, number]);
   }
-  /** Moves the focus to a physical point, on another series if needed. */
-  function showPoint(seriesId: string, mm: Vec3) {
+  /**
+   * Moves the focus to a physical point, on another series if needed. With a
+   * second series, shows both side by side with the linked cursor.
+   */
+  function showPoint(seriesId: string, mm: Vec3, compareWith?: string) {
     setRotate(false);
-    if (mode !== 'both' && mode !== 'slices') setMode('both');
+    if (compareWith) {
+      setCompareId(compareWith);
+      setMode('compare');
+    } else if (mode !== 'both' && mode !== 'slices') setMode('both');
     if (seriesId !== selectedId) {
       // The series load re-centres on the carried world point (see above).
       worldPoint.current = mm;
@@ -846,8 +852,12 @@ export default function Viewer({
             point={hasFocus && point ? point.mm : null}
             loading={loading}
             onShow={showPoint}
-            onSeries={(id) => {
+            onSeries={(id, compareWith) => {
               if (id !== selectedId) setSelectedId(id);
+              if (compareWith) {
+                setCompareId(compareWith);
+                setMode('compare');
+              }
             }}
             onClose={() => setLearnOpen(false)}
           />

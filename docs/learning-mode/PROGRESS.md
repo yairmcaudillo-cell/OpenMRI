@@ -6,9 +6,9 @@ the start of every session.
 
 ## Current state
 
-- Phase: **5 complete**. Yair approved Phase 0 and asked for all phases to be
+- Phase: **6 complete**. Yair approved Phase 0 and asked for all phases to be
   completed in one run, without stopping at the intermediate 🧑 gates.
-- Next task: 6.1 sequence-compare lessons.
+- Next task: 7.1 keyboard walk-through.
 - Branch: `claude/elegant-albattani-nifo57`.
 
 ## Decisions
@@ -272,3 +272,25 @@ Errors caught by the loop before commit:
 
 Deviation: added **Skip** (counts as wrong, still shows the answer), so a
 student is never stuck on a question.
+
+### CP-6 · Sequence module · 2026-09-30
+
+Gate: all green (browser 11/11; lessons: 5 lessons, 27 landmarks, 31
+questions)
+Acceptance: [x] FR-17 a `sequence-compare` lesson opens its two series in the
+existing Compare view with the linked cursor; the browser test checks series
+A, series B and the focus at the landmark (11.0, 10.0, 2.0)
+Look-back: Phases 0–5 re-run in the gate: green.
+Test-first: the browser test failed before the change (lesson not present).
+
+Two draft lessons: **T1 and T2** (`02 Axial MPRAGE` vs `03 Axial T2`) and
+**FLAIR** (`03 Axial T2` vs `04 Axial T2 FLAIR`), each with CSF in the right
+frontal horn (11,10,2), white matter (27,18,16) and vitreous (32,55,-37).
+All three points were checked by eye on T1, T2 and FLAIR crops; the geometry
+check now requires every point to be inside both series of the lesson.
+FLAIR shows the operated area clearly in pane B; the fixed notice covers
+this, and no lesson text refers to it.
+
+Error caught by the loop: a scripted edit failed because the formatter had
+wrapped the target line; the script asserts every replacement, so nothing
+half-applied was committed.

@@ -47,10 +47,10 @@ export default function LearnPanel({
   /** The viewer's focus in mm while visible; a new array on every move. */
   point: number[] | null;
   loading: boolean;
-  /** Moves the focus to a point on a series (switching series if needed). */
-  onShow: (seriesId: string, point: Vec3) => void;
-  /** Opens a series and keeps the current position. */
-  onSeries: (seriesId: string) => void;
+  /** Moves the focus to a point on a series; with a second series, side by side. */
+  onShow: (seriesId: string, point: Vec3, compareWith?: string) => void;
+  /** Opens a series (and a second one beside it) keeping the position. */
+  onSeries: (seriesId: string, compareWith?: string) => void;
   onClose: () => void;
 }) {
   // Only rendered after a click in the browser, so storage is readable here.
@@ -75,12 +75,21 @@ export default function LearnPanel({
   const referenceId = lesson
     ? resolveSeries(lesson.referenceSeries, series)
     : '';
+  const compareId = lesson?.compareSeries
+    ? resolveSeries(lesson.compareSeries, series)
+    : '';
+  const missing =
+    !!lesson && (!referenceId || (!!lesson.compareSeries && !compareId));
 
   function show(lessonToShow: Lesson, id: string) {
     const target = lessonToShow.landmarks.find((l) => l.id === id);
     const seriesId = resolveSeries(lessonToShow.referenceSeries, series);
+    const second = lessonToShow.compareSeries
+      ? resolveSeries(lessonToShow.compareSeries, series)
+      : undefined;
     setLandmarkId(id);
-    if (target && seriesId) onShow(seriesId, target.point);
+    if (target && seriesId && second !== '')
+      onShow(seriesId, target.point, second);
   }
 
   return (
@@ -186,10 +195,13 @@ export default function LearnPanel({
                 />
                 Show definitions
               </label>
-              {!referenceId && (
+              {missing && (
                 <p className="learn-error" role="alert">
-                  The series this lesson uses, {lesson.referenceSeries}, is not
-                  in this study.
+                  A series this lesson uses (
+                  {[lesson.referenceSeries, lesson.compareSeries]
+                    .filter(Boolean)
+                    .join(', ')}
+                  ) is not in this study.
                 </p>
               )}
 
@@ -211,8 +223,12 @@ export default function LearnPanel({
                   point={point}
                   loading={loading}
                   definitions={definitions}
-                  onStart={() => referenceId && onSeries(referenceId)}
-                  onShow={(p) => referenceId && onShow(referenceId, p)}
+                  onStart={() =>
+                    !missing && onSeries(referenceId, compareId || undefined)
+                  }
+                  onShow={(p) =>
+                    !missing && onShow(referenceId, p, compareId || undefined)
+                  }
                   onExit={() => setQuiz(false)}
                 />
               )}
@@ -255,7 +271,7 @@ export default function LearnPanel({
                     <li key={l.id}>
                       <button
                         aria-current={l.id === landmarkId ? 'true' : undefined}
-                        disabled={!referenceId}
+                        disabled={missing}
                         onClick={() => show(lesson, l.id)}
                       >
                         {l.name}
