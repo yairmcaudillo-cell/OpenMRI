@@ -6,7 +6,7 @@ the start of every session.
 
 ## Current state
 
-- Phase: **0 complete**. Waiting at the 🧑 gate for Yair to approve the spike
+- Phase: **0 complete** (commit 3d89f43, full gate green). Waiting at the 🧑 gate for Yair to approve the spike
   findings below.
 - Next task: 1.1 lesson types and validator.
 - Branch: `claude/elegant-albattani-nifo57`.
