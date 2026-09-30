@@ -1,0 +1,140 @@
+{
+  "id": "brainstem",
+  "kind": "landmarks",
+  "order": 3,
+  "tracks": ["undergrad", "med"],
+  "title": {
+    "undergrad": "The brainstem",
+    "med": "Brainstem and sella"
+  },
+  "summary": {
+    "undergrad": "The [[brainstem]] connects the brain to the spinal cord and keeps you alive: it controls breathing, heart rate and consciousness. Use the [[sagittal]] view to see all three parts at once.",
+    "med": "Identify the midbrain, pons and medulla on the midline sagittal image, and the pituitary in the sella turcica."
+  },
+  "referenceSeries": "02 Axial MPRAGE",
+  "review": {
+    "status": "draft"
+  },
+  "landmarks": [
+    {
+      "id": "midbrain",
+      "name": "Midbrain",
+      "point": [1, -22, -14],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "The top part of the brainstem. It helps control eye movements and relays signals for hearing and vision.",
+        "med": "Contains the nuclei of [[cranial-nerve|cranial nerves]] III and IV, the red nuclei and substantia nigra; the cerebral aqueduct runs through it."
+      },
+      "toleranceMm": 5,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "pons",
+      "name": "Pons",
+      "point": [1, -22, -30],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "The bulging middle part of the brainstem. \"Pons\" means bridge: it links the cerebrum with the cerebellum.",
+        "med": "Contains nuclei of cranial nerves V to VIII and the pontine nuclei relaying to the cerebellum via the middle cerebellar peduncles."
+      },
+      "toleranceMm": 5,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "medulla",
+      "name": "Medulla oblongata",
+      "point": [1, -34, -50],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "The lowest part of the brainstem, continuous with the spinal cord. It controls breathing and heart rate.",
+        "med": "Contains nuclei of cranial nerves IX to XII and cardiorespiratory centres; the corticospinal tracts decussate at its lower end (pyramidal decussation)."
+      },
+      "toleranceMm": 5,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "pituitary",
+      "name": "Pituitary gland",
+      "point": [1, 5, -32],
+      "tracks": ["med"],
+      "text": {
+        "med": "Sits in the sella turcica below the optic chiasm, between the cavernous sinuses. A mass here can compress the chiasm and cause a bitemporal hemianopia."
+      },
+      "toleranceMm": 4,
+      "review": {
+        "status": "draft"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "find-midbrain",
+      "type": "find",
+      "tracks": ["undergrad", "med"],
+      "landmark": "midbrain"
+    },
+    {
+      "id": "find-pons",
+      "type": "find",
+      "tracks": ["undergrad", "med"],
+      "landmark": "pons"
+    },
+    {
+      "id": "find-medulla",
+      "type": "find",
+      "tracks": ["undergrad", "med"],
+      "landmark": "medulla"
+    },
+    {
+      "id": "find-pituitary",
+      "type": "find",
+      "tracks": ["med"],
+      "landmark": "pituitary"
+    },
+    {
+      "id": "brainstem-order",
+      "type": "choice",
+      "tracks": ["undergrad", "med"],
+      "prompt": {
+        "undergrad": "From top to bottom, what are the three parts of the brainstem?",
+        "med": "From top to bottom, what are the three parts of the brainstem?"
+      },
+      "options": [
+        "Midbrain, pons, medulla",
+        "Pons, midbrain, medulla",
+        "Medulla, pons, midbrain"
+      ],
+      "answer": 0,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "pituitary-field",
+      "type": "choice",
+      "tracks": ["med"],
+      "prompt": {
+        "med": "A mass growing up from the structure at the marker would classically cause which visual field defect?"
+      },
+      "options": [
+        "Bitemporal hemianopia",
+        "Contralateral homonymous hemianopia",
+        "Monocular blindness on the same side"
+      ],
+      "answer": 0,
+      "landmark": "pituitary",
+      "explanation": {
+        "med": "An upward-growing pituitary mass compresses the crossing nasal fibres in the optic chiasm, causing a bitemporal hemianopia."
+      },
+      "review": {
+        "status": "draft"
+      }
+    }
+  ]
+}

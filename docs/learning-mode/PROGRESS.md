@@ -6,20 +6,21 @@ the start of every session.
 
 ## Current state
 
-- Phase: **0 complete** (commit 3d89f43, full gate green). Waiting at the 🧑 gate for Yair to approve the spike
-  findings below.
-- Next task: 1.1 lesson types and validator.
+- Phase: **1 complete**. Yair approved Phase 0 and asked for all phases to be
+  completed in one run, without stopping at the intermediate 🧑 gates.
+- Next task: 2.1 demo archive hash.
 - Branch: `claude/elegant-albattani-nifo57`.
 
 ## Decisions
 
-| ID  | Decision                                                                                          | Date       | By   |
-| --- | ------------------------------------------------------------------------------------------------- | ---------- | ---- |
-| D1  | Continue building. Asking the upstream author stays a condition of public release (Phase 8 gate). | 2026-09-30 | Yair |
-| D2  | open: settled per landmark in content review                                                      |            |      |
-| D3  | Reviewer will be a medical student or resident; Yair is finding one. Name added when confirmed.   | 2026-09-30 | Yair |
-| D4  | Yes: `@playwright/test` added for browser tests.                                                  | 2026-09-30 | Yair |
-| D5  | open: settled per landmark in content review                                                      |            |      |
+| ID  | Decision                                                                                                                                        | Date       | By   |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ---- |
+| D1  | Continue building. Asking the upstream author stays a condition of public release (Phase 8 gate).                                               | 2026-09-30 | Yair |
+| D2  | open: settled per landmark in content review                                                                                                    |            |      |
+| G   | Intermediate 🧑 gates (after Phases 0 and 3) waived: "complete all phases, don't report back until all are done". D1 stays a release condition. | 2026-09-30 | Yair |
+| D3  | Reviewer will be a medical student or resident; Yair is finding one. Name added when confirmed.                                                 | 2026-09-30 | Yair |
+| D4  | Yes: `@playwright/test` added for browser tests.                                                                                                | 2026-09-30 | Yair |
+| D5  | open: settled per landmark in content review                                                                                                    |            |      |
 
 ## Blocked
 
@@ -105,3 +106,63 @@ Imported the demo into a throwaway data directory (never `.openmri/`).
 
 Deviations from plan: `tests/e2e/pixels.ts` added (helper), and a small change
 to `scripts/demo.mjs` (port override), both needed for isolated browser tests.
+
+### CP-1 · Content model, validator, draft lessons · 2026-09-30
+
+Commit: see the Phase 1 commit on the branch
+Gate: all green (format, lint, typecheck, Node 36/36, lessons, Python 12/12,
+build, browser 2/2, hygiene)
+Acceptance: [x] `npm run lessons:check` passes on the real lessons and fails on
+every broken fixture (23 rule cases + CLI cases) [x] Python geometry test
+passes on the real demo and rejects points in air / outside the volume /
+unknown series [x] gate green
+
+What was built:
+
+- `lib/lessons.ts`: types, `validateLesson`, `validateGlossary`,
+  `validateCatalog`, glossary markup parser, track filters, series lookup,
+  find-answer scoring. Imports nothing, so Node runs it without a build.
+- `lib/lesson-catalog.ts`: bundles every `lessons/*.json` with
+  `import.meta.glob`; an author never edits code to add a lesson (NFR-6).
+- `scripts/check-lessons.mjs` (`npm run lessons:check`, now part of `npm run
+check`) and `scripts/check_lessons.py` + `tests/test_lessons.py` (geometry).
+- `lessons/schema.md` for authors; `lessons/glossary.json` (26 draft terms).
+- Three draft lessons, 21 landmarks, 28 questions, all `draft`.
+
+Draft landmark placement (by Claude, on `02 Axial MPRAGE`, each checked by eye
+in zoomed axial, coronal and sagittal crops; **the reviewer must confirm
+every one**):
+
+| Lesson            | Landmarks (RAS mm)                                                                                                                                                                                                                                                                             |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| lobes-and-surface | frontal (25,45,20) · parietal (35,-55,40) · temporal (50,-10,-20) · occipital (18,-85,10) · insula, med (40,0,4) · cerebellum (25,-62,-35) · eye (32,55,-37)                                                                                                                                   |
+| deep-structures   | lateral ventricle frontal horn (11,10,2) · third ventricle (1,-12,-2) · fourth ventricle (1,-36,-29) · CC genu (1,25,5) · CC splenium, med (1,-33,7) · thalamus (12,-18,-3) · caudate head (17,10,4) · putamen, med (25,2,0) · internal capsule PLIC, med (20,-8,2) · hippocampus (28,-22,-18) |
+| brainstem         | midbrain (1,-22,-14) · pons (1,-22,-30) · medulla (1,-34,-50) · pituitary, med (1,5,-32)                                                                                                                                                                                                       |
+
+Undergraduate track: 16 landmarks. Medical track: all 21.
+Operated area found on the FLAIR montage: patient's left, upper hemisphere,
+roughly 5–50 mm above the ventricles. Lateral landmarks are all on the right;
+midline ones sit below it. Left out on purpose: corpus callosum body (next to
+the enlarged left ventricle) and optic chiasm (could not place it
+confidently).
+
+Errors caught by the loop before commit:
+
+- Geometry check: the hole-filling loop moved mask axes twice, so a point
+  above the scan passed and valid points failed. Caught by negative probes;
+  fixed, and the probes are now tests.
+- Lint: error messages could print `[object Object]` for non-string ids;
+  fixed with a formatter.
+- Validator tests were written after the code, so each was proven able to
+  fail by three deliberate mutations (tolerance bound, inclusive distance,
+  draft check); each mutation failed a test.
+
+Deviations from plan:
+
+- 21 draft landmarks instead of 3, so the panel and quiz can be tried
+  properly. All are drafts; content ownership is unchanged.
+- Glossary terms are marked explicitly in text (`[[csf]]`) instead of
+  auto-matched (task 4.1). Explicit links can be validated and never
+  underline a word by accident.
+- Lessons gained a required `order` field (file names do not give teaching
+  order).

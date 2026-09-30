@@ -1,0 +1,203 @@
+{
+  "id": "lobes-and-surface",
+  "kind": "landmarks",
+  "order": 1,
+  "tracks": ["undergrad", "med"],
+  "title": {
+    "undergrad": "The lobes of the brain",
+    "med": "Lobes, insula and cerebellum"
+  },
+  "summary": {
+    "undergrad": "Find the four lobes of the cerebrum, the cerebellum and the eye, and see each one in three planes at once. Points on one side of the brain are placed on the patient's right. The viewer uses the [[radiological-convention]], so the patient's right appears on the left of the screen.",
+    "med": "Localise the cerebral lobes, the insula and the cerebellar hemisphere on a 3D T1 MPRAGE. Points on one side of the brain are placed on the patient's right. The viewer uses the [[radiological-convention]], so the patient's right appears on the left of the screen."
+  },
+  "referenceSeries": "02 Axial MPRAGE",
+  "review": {
+    "status": "draft"
+  },
+  "landmarks": [
+    {
+      "id": "frontal-lobe",
+      "name": "Frontal lobe (right)",
+      "point": [25, 45, 20],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "The largest lobe, at the front of the brain. It plans actions, controls movement, and supports decision making and personality.",
+        "med": "Contains primary motor cortex (precentral [[gyrus]]), premotor areas and prefrontal cortex; on the dominant side, Broca's area in the inferior frontal gyrus. Lesions classically cause [[contralateral]] weakness, disinhibition or expressive aphasia."
+      },
+      "toleranceMm": 10,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "parietal-lobe",
+      "name": "Parietal lobe (right)",
+      "point": [35, -55, 40],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "Behind the frontal lobe, at the top of the head. It combines touch and body position with vision to tell you where things are in space.",
+        "med": "Contains primary somatosensory cortex (postcentral gyrus) and association cortex for spatial attention. Non-dominant parietal lesions classically cause contralateral hemineglect."
+      },
+      "toleranceMm": 10,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "temporal-lobe",
+      "name": "Temporal lobe (right)",
+      "point": [50, -10, -20],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "At the side of the head, level with the ears. It processes sound and helps with memory and understanding language.",
+        "med": "Contains primary auditory cortex (Heschl's gyrus) and, on the dominant side, Wernicke's area; its medial part holds the hippocampus and amygdala."
+      },
+      "toleranceMm": 10,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "occipital-lobe",
+      "name": "Occipital lobe (right)",
+      "point": [18, -85, 10],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "At the back of the brain. It is the main centre for vision.",
+        "med": "Contains primary visual cortex around the calcarine [[sulcus]]. A lesion of one occipital lobe classically causes a contralateral homonymous hemianopia, often with macular sparing."
+      },
+      "toleranceMm": 10,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "insula",
+      "name": "Insula (right)",
+      "point": [40, 0, 4],
+      "tracks": ["med"],
+      "text": {
+        "med": "Cortex folded deep inside the lateral (Sylvian) fissure, covered by the frontal, parietal and temporal opercula. Involved in interoception, taste and autonomic function; supplied by M2 branches of the middle cerebral artery."
+      },
+      "toleranceMm": 6,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "cerebellum",
+      "name": "Cerebellum (right hemisphere)",
+      "point": [25, -62, -35],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "The \"little brain\" under the back of the cerebrum. It coordinates balance and smooth, accurate movement.",
+        "med": "Each cerebellar [[hemisphere]] coordinates the limbs on the same side (ipsilateral). Hemispheric lesions cause ipsilateral ataxia, dysmetria and intention tremor."
+      },
+      "toleranceMm": 10,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "eye",
+      "name": "Eye (right globe)",
+      "point": [32, 55, -37],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "The eyeball sits in the bony orbit at the front. On this T1 scan the fluid inside the eye looks dark.",
+        "med": "The globe sits in the orbit; the vitreous is dark on [[t1]]. The optic nerve leaves the back of the globe towards the optic canal."
+      },
+      "toleranceMm": 6,
+      "review": {
+        "status": "draft"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "find-frontal-lobe",
+      "type": "find",
+      "tracks": ["undergrad", "med"],
+      "landmark": "frontal-lobe"
+    },
+    {
+      "id": "find-parietal-lobe",
+      "type": "find",
+      "tracks": ["undergrad", "med"],
+      "landmark": "parietal-lobe"
+    },
+    {
+      "id": "find-temporal-lobe",
+      "type": "find",
+      "tracks": ["undergrad", "med"],
+      "landmark": "temporal-lobe"
+    },
+    {
+      "id": "find-occipital-lobe",
+      "type": "find",
+      "tracks": ["undergrad", "med"],
+      "landmark": "occipital-lobe"
+    },
+    {
+      "id": "find-cerebellum",
+      "type": "find",
+      "tracks": ["undergrad", "med"],
+      "landmark": "cerebellum"
+    },
+    {
+      "id": "find-eye",
+      "type": "find",
+      "tracks": ["undergrad", "med"],
+      "landmark": "eye"
+    },
+    {
+      "id": "find-insula",
+      "type": "find",
+      "tracks": ["med"],
+      "landmark": "insula"
+    },
+    {
+      "id": "occipital-function",
+      "type": "choice",
+      "tracks": ["undergrad", "med"],
+      "prompt": {
+        "undergrad": "Which lobe is at the marker, and what is its main job?",
+        "med": "The marker lies in which lobe, and which deficit would a lesion here classically cause?"
+      },
+      "options": [
+        "Occipital lobe: vision",
+        "Frontal lobe: movement",
+        "Temporal lobe: hearing",
+        "Parietal lobe: touch"
+      ],
+      "answer": 0,
+      "landmark": "occipital-lobe",
+      "explanation": {
+        "undergrad": "The occipital lobe at the back of the brain processes vision.",
+        "med": "Occipital lobe; a unilateral lesion classically causes a contralateral homonymous hemianopia."
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "plane-names",
+      "type": "choice",
+      "tracks": ["undergrad", "med"],
+      "prompt": {
+        "undergrad": "In which plane do you look at a slice from ear to ear, as if facing the person?",
+        "med": "In which plane do you look at a slice from ear to ear, as if facing the person?"
+      },
+      "options": ["Coronal", "Axial", "Sagittal"],
+      "answer": 0,
+      "explanation": {
+        "undergrad": "That is the [[coronal]] plane. The [[axial]] plane is horizontal and the [[sagittal]] plane runs front to back.",
+        "med": "That is the [[coronal]] plane. The [[axial]] plane is horizontal and the [[sagittal]] plane runs front to back."
+      },
+      "review": {
+        "status": "draft"
+      }
+    }
+  ]
+}
