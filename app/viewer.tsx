@@ -129,6 +129,9 @@ export default function Viewer({
 }) {
   const [overviewOpen, setOverviewOpen] = useState(false);
   const [learnOpen, setLearnOpen] = useState(false);
+  // Clicks and scrolls on the slices. The quiz counts only these as answers;
+  // the focus also moves on resize and after loads.
+  const [sliceInput, setSliceInput] = useState(0);
   const [timelineOpen, setTimelineOpen] = useState(false);
 
   const [studyKey, setStudyKey] = useState(
@@ -850,6 +853,7 @@ export default function Viewer({
           <LearnPanel
             series={manifest?.series ?? []}
             point={hasFocus && point ? point.mm : null}
+            sliceInput={sliceInput}
             loading={loading}
             onShow={showPoint}
             onSeries={(id, compareWith) => {
@@ -1266,6 +1270,8 @@ export default function Viewer({
               <canvas
                 ref={sliceCanvas}
                 aria-label="Three MRI slices. Click to pick a point, scroll to move the slice."
+                onPointerUp={() => setSliceInput((n) => n + 1)}
+                onWheelCapture={() => setSliceInput((n) => n + 1)}
               />
               {sliceNames.map((name, i) => (
                 <div className={`slice-overlay slice-${i}`} key={name}>

@@ -51,7 +51,13 @@ test('a quiz: find by clicking, a miss shows the answer, choices explain, the be
     }),
   ).toBeVisible();
   const check = quiz.getByRole('button', { name: 'Check' });
-  await expect(check).toBeDisabled(); // no click on a slice yet
+  // No click on a slice yet. Late location updates from the viewer after a
+  // load must not count as the student's answer.
+  await page.setViewportSize({ width: 1400, height: 880 });
+  await page.waitForTimeout(3000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.waitForTimeout(3000);
+  await expect(check).toBeDisabled();
 
   // Q1, right: click the slice where the crosshair already marks the answer.
   const slices = page.getByLabel(/Three MRI slices/);

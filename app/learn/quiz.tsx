@@ -26,6 +26,7 @@ export default function Quiz({
   lesson,
   track,
   point,
+  sliceInput,
   loading,
   definitions,
   onStart,
@@ -34,8 +35,10 @@ export default function Quiz({
 }: {
   lesson: Lesson;
   track: Track;
-  /** The current focus from the viewer; a new object on every slice click. */
+  /** The current focus from the viewer, in mm. */
   point: number[] | null;
+  /** Counts clicks and scrolls on the slices; only these count as answers. */
+  sliceInput: number;
   /** The viewer is loading a series; answers wait until it is ready. */
   loading: boolean;
   definitions: boolean;
@@ -50,25 +53,20 @@ export default function Quiz({
   const [step, setStep] = useState(-1); // -1 before the start
   const [results, setResults] = useState<QuizResult[]>([]);
   const [answer, setAnswer] = useState<Answer | null>(null);
-  // The focus when the question appeared (or when a series load finished);
-  // a different object afterwards means the student clicked or scrolled.
-  const [startPoint, setStartPoint] = useState<number[] | null>(null);
-  const [wasLoading, setWasLoading] = useState(loading);
-  if (wasLoading !== loading) {
-    setWasLoading(loading);
-    if (!loading) setStartPoint(point);
-  }
+  // Slice input when the question appeared. The focus also moves on its own
+  // (resize, series loads), so only a click or scroll after this counts.
+  const [startInput, setStartInput] = useState(sliceInput);
 
   const question = step >= 0 ? questions[step] : undefined;
   const target = question?.landmark
     ? lesson.landmarks.find((l) => l.id === question.landmark)
     : undefined;
-  const clicked = !loading && !!point && point !== startPoint;
+  const clicked = !loading && !!point && sliceInput !== startInput;
 
   function ask(index: number) {
     setAnswer(null);
     setStep(index);
-    setStartPoint(point);
+    setStartInput(sliceInput);
     const next = questions[index];
     const shown = next?.landmark
       ? lesson.landmarks.find((l) => l.id === next.landmark)

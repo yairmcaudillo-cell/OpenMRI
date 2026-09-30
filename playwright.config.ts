@@ -16,7 +16,9 @@ export default defineConfig({
   use: {
     baseURL: `http://127.0.0.1:${PORT}`,
     viewport: { width: 1440, height: 900 },
-    actionTimeout: 15_000,
+    // Software WebGL (no GPU) can keep the page busy for over 15 s after a
+    // volume load, and actions wait for it. Still well under the test limit.
+    actionTimeout: 45_000,
     launchOptions: {
       args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
     },

@@ -38,6 +38,7 @@ const TRACK_HINTS: Record<Track, string> = {
 export default function LearnPanel({
   series,
   point,
+  sliceInput,
   loading,
   onShow,
   onSeries,
@@ -46,6 +47,8 @@ export default function LearnPanel({
   series: LearnSeries[];
   /** The viewer's focus in mm while visible; a new array on every move. */
   point: number[] | null;
+  /** Counts clicks and scrolls on the slices. */
+  sliceInput: number;
   loading: boolean;
   /** Moves the focus to a point on a series; with a second series, side by side. */
   onShow: (seriesId: string, point: Vec3, compareWith?: string) => void;
@@ -221,6 +224,7 @@ export default function LearnPanel({
                   lesson={lesson}
                   track={track}
                   point={point}
+                  sliceInput={sliceInput}
                   loading={loading}
                   definitions={definitions}
                   onStart={() =>

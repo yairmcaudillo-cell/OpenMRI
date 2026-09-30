@@ -2,10 +2,7 @@
   "id": "flair",
   "kind": "sequence-compare",
   "order": 5,
-  "tracks": [
-    "undergrad",
-    "med"
-  ],
+  "tracks": ["undergrad", "med"],
   "title": {
     "undergrad": "Why FLAIR hides the fluid",
     "med": "FLAIR: T2 with the water nulled"
@@ -23,15 +20,8 @@
     {
       "id": "csf",
       "name": "Fluid in a ventricle (CSF)",
-      "point": [
-        11,
-        10,
-        2
-      ],
-      "tracks": [
-        "undergrad",
-        "med"
-      ],
+      "point": [11, 10, 2],
+      "tracks": ["undergrad", "med"],
       "text": {
         "undergrad": "Bright on T2 (A), dark on FLAIR (B). That is the whole trick of FLAIR.",
         "med": "CSF: hyperintense on T2, nulled (hypointense) on FLAIR by the inversion time."
@@ -44,15 +34,8 @@
     {
       "id": "white-matter",
       "name": "White matter",
-      "point": [
-        27,
-        18,
-        16
-      ],
-      "tracks": [
-        "undergrad",
-        "med"
-      ],
+      "point": [27, 18, 16],
+      "tracks": ["undergrad", "med"],
       "text": {
         "undergrad": "Brain tissue looks similar on both, because FLAIR keeps the T2 contrast of tissue.",
         "med": "Normal white matter is mildly hypointense to cortex on both T2 and FLAIR."
@@ -65,15 +48,8 @@
     {
       "id": "vitreous",
       "name": "Fluid inside the eye",
-      "point": [
-        32,
-        55,
-        -37
-      ],
-      "tracks": [
-        "undergrad",
-        "med"
-      ],
+      "point": [32, 55, -37],
+      "tracks": ["undergrad", "med"],
       "text": {
         "undergrad": "The fluid inside the eye is free water too, so it is also darkened on FLAIR.",
         "med": "Vitreous is free water and is largely suppressed on FLAIR, like CSF."
@@ -88,10 +64,7 @@
     {
       "id": "flair-csf",
       "type": "choice",
-      "tracks": [
-        "undergrad",
-        "med"
-      ],
+      "tracks": ["undergrad", "med"],
       "prompt": {
         "undergrad": "The marker is in a ventricle. Why is it dark in pane B?",
         "med": "The marker is in a ventricle. Why is it dark in pane B?"

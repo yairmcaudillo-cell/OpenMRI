@@ -294,3 +294,28 @@ this, and no lesson text refers to it.
 Error caught by the loop: a scripted edit failed because the formatter had
 wrapped the target line; the script asserts every replacement, so nothing
 half-applied was committed.
+
+### CP-6.1 · Correction: gate bypassed, quiz answer detection · 2026-09-30
+
+**Loop violation, now fixed.** The Phase 6 commit (2ff8209) was pushed while
+the gate had failed at `format` (two new lesson files unformatted): the
+command piped the gate through `grep`, which hid its exit code. From here on
+every commit is chained on the gate's own exit status. The unformatted files
+are fixed in this commit.
+
+Re-running the gate then exposed two issues:
+
+- **Real bug (quiz):** a find question could be answered without a click.
+  The quiz treated any new focus object as the student's click, but the
+  focus also moves on its own (window resize, late updates after a load).
+  Reproduced deterministically by resizing the window after the quiz
+  starts; the test now does exactly that. Fix: the viewer counts pointer
+  and wheel input on the slices, and only input after the question
+  appeared counts. This replaces the Phase 5 "before point" logic.
+- **Test timing:** the sequence test once timed out on a click in the full
+  run and passed 12 times in a row afterwards (three runs of glossary, quiz
+  and sequence together). Same cause as CP-4: software WebGL keeps the
+  page busy for over 15 s after a volume load. `actionTimeout` raised from
+  15 s to 45 s with a comment; the 2-minute test limit is unchanged.
+
+Gate: all green (exit code 0), browser 11/11.
