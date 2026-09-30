@@ -6,6 +6,7 @@ import type { FocusController } from './focus-controller';
 import type { SlicePlanesController } from './slice-planes-controller';
 import ComparePane from './compare-pane';
 import StudyOverview from './study-overview';
+import LearnPanel from './learn/learn-panel';
 import FocusTimeline from './focus-timeline';
 import type { Vec3 } from '@/lib/focus-timeline';
 import type { Patient, StudyRecord } from './library-workspace';
@@ -35,6 +36,7 @@ import {
   FolderOpen,
   Upload,
   UserRound,
+  GraduationCap,
 } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
@@ -126,6 +128,7 @@ export default function Viewer({
   initialStudy?: string;
 }) {
   const [overviewOpen, setOverviewOpen] = useState(false);
+  const [learnOpen, setLearnOpen] = useState(false);
   const [timelineOpen, setTimelineOpen] = useState(false);
 
   const [studyKey, setStudyKey] = useState(
@@ -145,6 +148,10 @@ export default function Viewer({
     comparisonCanvas.current = canvas;
     setComparisonReady(!!canvas);
   }, []);
+  // Learning mode is offered on the shipped demo study only (lib/library.ts).
+  const isDemo = studies.find((s) => s.id === studyKey)?.demo === true;
+  const learning = learnOpen && isDemo;
+  const panelOpen = overviewOpen || learning;
   const studyDate = displayDate(
     studies.find((s) => s.id === studyKey)?.date || '',
   );
@@ -570,6 +577,17 @@ export default function Viewer({
     } else if (loading) pendingBookmark.current = saved;
     else focusRef.current?.moveTo(saved.frac as [number, number, number]);
   }
+  /** Moves the focus to a physical point, on another series if needed. */
+  function showPoint(seriesId: string, mm: Vec3) {
+    setRotate(false);
+    if (mode !== 'both' && mode !== 'slices') setMode('both');
+    if (seriesId !== selectedId) {
+      // The series load re-centres on the carried world point (see above).
+      worldPoint.current = mm;
+      setSelectedId(seriesId);
+    } else if (loading) worldPoint.current = mm;
+    else focusRef.current?.moveToWorld(mm);
+  }
   function savePoint() {
     if (!point) return;
     setBookmark({ ...point, studyId: studyKey });
@@ -738,10 +756,23 @@ export default function Viewer({
             <Upload size={16} />
             <span>Import MRI</span>
           </button>
+          {isDemo && (
+            <button
+              className={`header-toggle ${learning ? 'active' : ''}`}
+              aria-pressed={learning}
+              onClick={() => {
+                setOverviewOpen(false);
+                setLearnOpen(!learning);
+              }}
+            >
+              <GraduationCap size={17} /> Learn
+            </button>
+          )}
           <button
             className={`header-toggle ${overviewOpen ? 'active' : ''}`}
             aria-pressed={overviewOpen}
             onClick={() => {
+              setLearnOpen(false);
               setOverviewOpen(!overviewOpen);
             }}
           >
@@ -797,7 +828,7 @@ export default function Viewer({
           </Dialog>
         </div>
       </header>
-      <div className={`workspace ${overviewOpen ? 'panel-open' : ''}`}>
+      <div className={`workspace ${panelOpen ? 'panel-open' : ''}`}>
         {overviewOpen && (
           <StudyOverview
             patient={patient}
@@ -809,7 +840,14 @@ export default function Viewer({
             onClose={() => setOverviewOpen(false)}
           />
         )}
-        <aside className="controls" hidden={overviewOpen}>
+        {learning && (
+          <LearnPanel
+            series={manifest?.series ?? []}
+            onShow={showPoint}
+            onClose={() => setLearnOpen(false)}
+          />
+        )}
+        <aside className="controls" hidden={panelOpen}>
           <div className="control-heading">
             <span className="eyebrow">PATIENT</span>
             <button

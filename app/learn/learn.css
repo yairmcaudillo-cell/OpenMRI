@@ -1,0 +1,234 @@
+/* Learning mode panel. Replaces the left sidebar like the history panel. */
+.learn-panel header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #c1aaff;
+}
+.learn-panel header > .icon-button {
+  margin-left: auto;
+}
+.learn-panel h2 {
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 18px 0 10px;
+  color: #fff;
+}
+.learn-panel h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 8px;
+  color: #fff;
+}
+.learn-panel p {
+  font-size: 12px;
+  line-height: 1.65;
+  color: #aaa;
+}
+.learn-panel button:focus-visible,
+.learn-panel .glossary-term:focus-visible {
+  outline: 2px solid #b79dff;
+  outline-offset: 2px;
+}
+.track-picker button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin-top: 10px;
+  padding: 14px;
+  border: 1px solid #352947;
+  border-radius: 10px;
+  background: #100b18;
+  color: #fff;
+  cursor: pointer;
+}
+.track-picker button:hover {
+  border-color: #8052ff;
+}
+.track-picker strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+}
+.track-picker small {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #aaa;
+}
+.track-switch {
+  display: flex;
+  gap: 4px;
+  margin: 18px 0 0;
+  padding: 3px;
+  border: 1px solid #29232f;
+  border-radius: 9px;
+}
+.track-switch legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.track-switch button {
+  flex: 1;
+  padding: 7px 4px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #aaa;
+  font-size: 11px;
+  cursor: pointer;
+}
+.track-switch button[aria-pressed='true'] {
+  background: #2a1d4a;
+  color: #fff;
+}
+.learn-notice {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-left: 2px solid #ffb829;
+  background: #120e05;
+  font-size: 11px !important;
+  color: #e8d9b5 !important;
+}
+.lesson-list {
+  display: flex;
+  flex-direction: column;
+}
+.lesson-list button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  padding: 12px 8px;
+  border: 0;
+  border-left: 1px solid #29232f;
+  background: transparent;
+  color: #ddd;
+  cursor: pointer;
+}
+.lesson-list button:hover {
+  background: #130d1e;
+  border-left-color: #8052ff;
+}
+.lesson-list strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 400;
+}
+.lesson-list small,
+.lesson-order {
+  display: block;
+  font-size: 10px;
+  color: #999;
+  margin-top: 4px;
+}
+.lesson-list svg {
+  margin-left: auto;
+  flex: none;
+}
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 18px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #b79dff;
+  font-size: 12px;
+  cursor: pointer;
+}
+.draft-badge,
+.reviewed-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  letter-spacing: 0.02em;
+}
+.draft-badge {
+  border: 1px dashed #ffb829;
+  color: #ffcf6b;
+  background: #1a1305;
+}
+.draft-badge::before {
+  content: '✎ ';
+}
+.reviewed-badge {
+  border: 1px solid #5fbf8f;
+  color: #a8f0c8;
+  background: #08170f;
+}
+.reviewed-badge::before {
+  content: '✓ ';
+}
+.learn-error {
+  color: #ffb3a1 !important;
+}
+.landmark-card {
+  margin: 16px 0;
+  padding: 14px;
+  border: 1px solid #352947;
+  border-radius: 10px;
+  background: #0c0813;
+}
+.landmark-card p {
+  margin: 10px 0 0;
+  color: #ccc;
+}
+.landmark-steps {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  font-size: 11px;
+  color: #999;
+}
+.landmark-steps button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #352947;
+  border-radius: 8px;
+  background: #130d1e;
+  color: #fff;
+  cursor: pointer;
+}
+.landmark-steps button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.landmark-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+.landmark-list button {
+  width: 100%;
+  text-align: left;
+  padding: 9px 10px;
+  border: 0;
+  border-left: 1px solid #29232f;
+  background: transparent;
+  color: #ccc;
+  font-size: 12px;
+  cursor: pointer;
+}
+.landmark-list button:hover {
+  background: #130d1e;
+}
+.landmark-list button[aria-current='true'] {
+  color: #fff;
+  background: #1a1030;
+  border-left: 2px solid #8052ff;
+}
+.landmark-list button:disabled {
+  color: #666;
+  cursor: default;
+}

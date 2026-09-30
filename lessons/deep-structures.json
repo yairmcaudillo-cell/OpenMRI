@@ -8,7 +8,7 @@
     "med": "Ventricles, commissures and deep grey matter"
   },
   "summary": {
-    "undergrad": "Follow the fluid-filled [[ventricle|ventricles]] and find the structures around them. On this [[t1]] scan fluid looks dark. Points on one side of the brain are placed on the patient's right. The viewer uses the [[radiological-convention]], so the patient's right appears on the left of the screen.",
+    "undergrad": "Follow the fluid-filled [[ventricle|ventricles]] and find the structures around them. On this [[t1|T1]] scan fluid looks dark. Points on one side of the brain are placed on the patient's right. The viewer uses the [[radiological-convention]], so the patient's right appears on the left of the screen.",
     "med": "Trace the ventricular system and the deep grey nuclei and white matter around it. Points on one side of the brain are placed on the patient's right. The viewer uses the [[radiological-convention]], so the patient's right appears on the left of the screen."
   },
   "referenceSeries": "02 Axial MPRAGE",
@@ -22,8 +22,8 @@
       "point": [11, 10, 2],
       "tracks": ["undergrad", "med"],
       "text": {
-        "undergrad": "The two lateral ventricles are the largest fluid spaces in the brain. They are filled with [[csf]], which is dark on this scan.",
-        "med": "Frontal horn of the right lateral ventricle, bounded laterally by the head of the caudate and medially by the septum pellucidum. [[csf]] is produced mainly by choroid plexus."
+        "undergrad": "The two lateral ventricles are the largest fluid spaces in the brain. They are filled with [[csf|CSF]], which is dark on this scan.",
+        "med": "Frontal horn of the right lateral ventricle, bounded laterally by the head of the caudate and medially by the septum pellucidum. [[csf|CSF]] is produced mainly by choroid plexus."
       },
       "toleranceMm": 6,
       "review": {
@@ -51,7 +51,7 @@
       "tracks": ["undergrad", "med"],
       "text": {
         "undergrad": "A small fluid space between the brainstem in front and the cerebellum behind.",
-        "med": "Lies between the pons and upper medulla anteriorly and the cerebellum posteriorly; drains [[csf]] into the subarachnoid space through the foramina of Luschka and Magendie."
+        "med": "Lies between the pons and upper medulla anteriorly and the cerebellum posteriorly; drains [[csf|CSF]] into the subarachnoid space through the foramina of Luschka and Magendie."
       },
       "toleranceMm": 4,
       "review": {
@@ -231,8 +231,8 @@
       "answer": 0,
       "landmark": "lateral-ventricle",
       "explanation": {
-        "undergrad": "The ventricles contain [[csf]]. Fluid is dark on [[t1]] images and bright on [[t2]] images.",
-        "med": "The ventricles contain [[csf]]. Fluid is dark on [[t1]] images and bright on [[t2]] images."
+        "undergrad": "The ventricles contain [[csf|CSF]]. Fluid is dark on [[t1|T1]] images and bright on [[t2|T2]] images.",
+        "med": "The ventricles contain [[csf|CSF]]. Fluid is dark on [[t1|T1]] images and bright on [[t2|T2]] images."
       },
       "review": {
         "status": "draft"

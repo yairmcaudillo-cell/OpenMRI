@@ -5,7 +5,8 @@ import type { Locator, Page } from '@playwright/test';
  * Decoded in the page with a 2D canvas, so no image library is needed.
  */
 export async function litShare(page: Page, target: Locator) {
-  const png = (await target.screenshot()).toString('base64');
+  // Software WebGL can take a while to settle; keep the whole poll's budget.
+  const png = (await target.screenshot({ timeout: 60_000 })).toString('base64');
   return page.evaluate(async (data) => {
     const image = new Image();
     image.src = `data:image/png;base64,${data}`;

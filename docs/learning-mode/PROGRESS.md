@@ -6,9 +6,9 @@ the start of every session.
 
 ## Current state
 
-- Phase: **2 complete**. Yair approved Phase 0 and asked for all phases to be
+- Phase: **3 complete**. Yair approved Phase 0 and asked for all phases to be
   completed in one run, without stopping at the intermediate 🧑 gates.
-- Next task: 3.1 remembered track.
+- Next task: 4.2 glossary tooltips.
 - Branch: `claude/elegant-albattani-nifo57`.
 
 ## Decisions
@@ -182,3 +182,40 @@ Deviation: the hash lives in `lib/library.ts` as `DEMO_ARCHIVE_SHA256`, not in
 a new `lib/demo.ts`. The tests load `library.ts` as a standalone module, which
 cannot import a sibling file. Task 2.3 helpers were already built and tested
 in Phase 1.
+
+### CP-3 · Learning panel · 2026-09-30
+
+Gate: all green (Node 38/38, Python 12/12, browser 7/7)
+Acceptance: [x] FR-1 track asked on first use and remembered (browser test,
+new visit in the same browser) [x] FR-2 switching track keeps series and
+focus (browser test) [x] FR-3–FR-6 lessons and landmarks per track;
+medical-only Putamen hidden on the undergraduate track [x] FR-5 a landmark
+moves the focus to its point, switching from `01 +C` to `02 Axial MPRAGE`
+first; readout (12.0, −18.0, −3.0) matches the lesson exactly [x] FR-7 no
+Learn button on a synthetic non-demo study [x] FR-8 previous / next
+[x] FR-10 draft badges [x] FR-12 notice always shown
+Look-back: Phase 0–2 checks re-run in the gate: green. The screenshot of the
+panel was checked by eye.
+
+Test-first: the three panel tests failed before the panel existed (no Learn
+button).
+
+Errors caught by the loop before commit:
+
+- Landmark tests reported the focus 17–24 mm off. A debug run showed the jump
+  lands exactly; switching series reloads the volume, which takes ~4.5 s
+  under software WebGL, longer than the poll's default 5 s budget with setup.
+  Fixed the test's wait (30 s), not the code.
+- The track test failed once in a full run and passed three times alone.
+  Root cause: after a new visit the test clicked through the entering
+  transition, which covers the page for up to 6.5 s. Every test now opens a
+  study through one helper that waits for the transition to finish.
+- The smoke screenshot started to hit the new 15 s action limit while the
+  canvas settled; it now has its own 60 s budget inside the 60 s poll.
+- The panel screenshot showed raw glossary ids ("t1 scan",
+  "radiological-convention"). Bare links now show their id as words, and
+  abbreviations use explicit text (`[[csf|CSF]]`). Test added first.
+
+Also: browser tests import a small synthetic NIfTI study (global setup) so
+"not the demo" is tested against a real import. `actionTimeout` 15 s keeps a
+missing element from costing the full 2-minute test timeout.

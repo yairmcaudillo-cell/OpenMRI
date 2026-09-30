@@ -216,6 +216,10 @@ test('glossary markup splits into plain text and terms', () => {
   ]);
   assert.equal(L.plainText('A [[sulcus|sulci]] here'), 'A sulci here');
   assert.deepEqual(L.parseGlossaryText('no terms'), [{ text: 'no terms' }]);
+  // A bare link shows its id as words, never with hyphens.
+  assert.deepEqual(L.parseGlossaryText('[[grey-matter]]'), [
+    { text: 'grey matter', term: 'grey-matter' },
+  ]);
 });
 
 test('track helpers show each track only its own lessons, landmarks and questions', () => {

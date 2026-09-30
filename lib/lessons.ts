@@ -340,7 +340,8 @@ export function parseGlossaryText(text: string): TextPart[] {
     const start = match.index ?? 0;
     if (start > last) parts.push({ text: text.slice(last, start) });
     const id = match[1].trim();
-    parts.push({ text: (match[2] ?? id).trim() || id, term: id });
+    const shown = (match[2] ?? id.replaceAll('-', ' ')).trim();
+    parts.push({ text: shown || id, term: id });
     last = start + match[0].length;
   }
   if (last < text.length) parts.push({ text: text.slice(last) });

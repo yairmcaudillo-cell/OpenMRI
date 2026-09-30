@@ -1,10 +1,11 @@
 import { expect, test } from '@playwright/test';
 import { litShare } from './pixels';
+import { SYNTHETIC_PATIENT } from './global-setup';
 
 test('the demo study opens and the 3D view renders', async ({ page }) => {
   await page.goto('/');
   const recent = page.getByRole('region', { name: 'Recent studies' });
-  await recent.getByRole('button').first().click();
+  await recent.getByRole('button', { name: /Jane/ }).click();
   const viewer = page.getByRole('region', { name: 'MRI viewer' });
   const canvas = viewer.locator('canvas').first();
   await expect(canvas).toBeVisible();
@@ -22,8 +23,18 @@ test('the pixel check reports a blank element as blank', async ({ page }) => {
   expect(await litShare(page, page.locator('#blank'))).toBe(0);
 });
 
-test('the imported demo study is flagged as the demo', async ({ request }) => {
+test('only the imported demo study is flagged as the demo', async ({
+  request,
+}) => {
   const library = await (await request.get('/api/library')).json();
-  expect(library.studies.length).toBeGreaterThan(0);
-  expect(library.studies.every((s: { demo: boolean }) => s.demo)).toBe(true);
+  const nameOf = (id: string) =>
+    library.patients.find((p: { id: string }) => p.id === id).name;
+  const flags = library.studies.map(
+    (s: { patient_id: string; demo: boolean }) => [
+      nameOf(s.patient_id),
+      s.demo,
+    ],
+  );
+  expect(flags).toContainEqual(['Jane', true]);
+  expect(flags).toContainEqual([SYNTHETIC_PATIENT, false]);
 });

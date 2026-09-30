@@ -106,7 +106,7 @@
       "tracks": ["undergrad", "med"],
       "text": {
         "undergrad": "The eyeball sits in the bony orbit at the front. On this T1 scan the fluid inside the eye looks dark.",
-        "med": "The globe sits in the orbit; the vitreous is dark on [[t1]]. The optic nerve leaves the back of the globe towards the optic canal."
+        "med": "The globe sits in the orbit; the vitreous is dark on [[t1|T1]]. The optic nerve leaves the back of the globe towards the optic canal."
       },
       "toleranceMm": 6,
       "review": {
