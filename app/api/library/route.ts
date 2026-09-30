@@ -1,15 +1,11 @@
-import { db, failure, localMutation } from '@/lib/library';
+import { catalogStudies, db, failure, localMutation } from '@/lib/library';
 export async function GET() {
   try {
     const d = db();
     return Response.json(
       {
         patients: d.prepare('SELECT * FROM patients ORDER BY created_at').all(),
-        studies: d
-          .prepare(
-            'SELECT id,patient_id,date,label,body_part,created_at FROM studies ORDER BY date DESC',
-          )
-          .all(),
+        studies: catalogStudies(),
         jobs: d
           .prepare(
             "SELECT id,status,stage,progress,filename,error FROM jobs WHERE status NOT IN ('complete','cancelled') ORDER BY created_at DESC LIMIT 20",

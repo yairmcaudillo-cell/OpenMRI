@@ -21,3 +21,9 @@ test('the pixel check reports a blank element as blank', async ({ page }) => {
   );
   expect(await litShare(page, page.locator('#blank'))).toBe(0);
 });
+
+test('the imported demo study is flagged as the demo', async ({ request }) => {
+  const library = await (await request.get('/api/library')).json();
+  expect(library.studies.length).toBeGreaterThan(0);
+  expect(library.studies.every((s: { demo: boolean }) => s.demo)).toBe(true);
+});

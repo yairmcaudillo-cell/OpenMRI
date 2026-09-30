@@ -6,9 +6,9 @@ the start of every session.
 
 ## Current state
 
-- Phase: **1 complete**. Yair approved Phase 0 and asked for all phases to be
+- Phase: **2 complete**. Yair approved Phase 0 and asked for all phases to be
   completed in one run, without stopping at the intermediate 🧑 gates.
-- Next task: 2.1 demo archive hash.
+- Next task: 3.1 remembered track.
 - Branch: `claude/elegant-albattani-nifo57`.
 
 ## Decisions
@@ -166,3 +166,19 @@ Deviations from plan:
   underline a word by accident.
 - Lessons gained a required `order` field (file names do not give teaching
   order).
+
+### CP-2 · Demo detection and lesson helpers · 2026-09-30
+
+Gate: all green (Node 38/38, Python 12/12, browser 3/3)
+Acceptance: [x] demo study reports `demo: true` (browser test on the real
+import) [x] another study, even one whose patient is named Jane, reports
+`demo: false` (Node test) [x] the archive hash is never sent to the browser
+[x] track helpers filter correctly (Phase 1 tests)
+Look-back: Phase 0 smoke test and Phase 1 lesson and geometry checks re-run
+in the gate: green.
+Test-first: the two demo tests failed before the implementation, for the
+right reason (function and constant missing).
+Deviation: the hash lives in `lib/library.ts` as `DEMO_ARCHIVE_SHA256`, not in
+a new `lib/demo.ts`. The tests load `library.ts` as a standalone module, which
+cannot import a sibling file. Task 2.3 helpers were already built and tested
+in Phase 1.
