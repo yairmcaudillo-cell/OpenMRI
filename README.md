@@ -34,8 +34,24 @@
 | **Focus over time**     | Mark a region on one date; other dates of the same head MRI are rigidly registered to it. Compare side by side, with a wipe, or by blinking between A and B. |
 | **Welcome screen**      | Your five most recent studies one click away, next to the import wizard. Opening a study plays a short transition while the volume loads.                    |
 | **Snapshots**           | PNG snapshots of the current view, saved into your data directory.                                                                                           |
+| **Learning mode**       | Neuroanatomy and MRI lessons on the demo study, with an undergraduate and a medical-student track, a glossary and quizzes. See below.                        |
 
 OpenMRI is a visualization tool. It does not detect, measure, or diagnose anything.
+
+## Learning mode
+
+On the demo study, **Learn** opens lessons for students: pick the
+undergraduate or the medical-student track, click a landmark and the three
+slices and the 3D marker move to it, read definitions of terms in place, and
+test yourself with find-it and multiple-choice quizzes. Two lessons compare
+T1, T2 and FLAIR side by side. All content is a **draft until a medical
+reviewer checks it**, and the app marks it so.
+
+[docs/learning-mode/README.md](docs/learning-mode/README.md) has the guide
+and screenshots; [AUTHORING.md](docs/learning-mode/AUTHORING.md) explains
+how to write and review lessons. Learning mode was added in this fork by Yair
+([@yairmcaudillo-cell](https://github.com/yairmcaudillo-cell)); OpenMRI itself
+is by Maksim Khuzin.
 
 ## Requirements
 
@@ -154,7 +170,10 @@ npm run typecheck    # tsc
 npm test             # Node tests: focus controller, slice planes, timeline service, contracts
 npm run test:import  # Python tests: ZIP import, real dcm2niix conversion, registration
 npm run format       # oxfmt
-npm run check        # lint, typecheck and the Node tests together
+npm run check        # lint, typecheck, the Node tests and lessons:check together
+npm run lessons:check  # learning-mode lessons: structure, text per track, review rules
+npm run test:e2e     # browser tests on the demo study (after npm run build)
+npm run gate         # everything above plus the build, stopping at the first failure
 ```
 
 The Python tests generate synthetic DICOM and NIfTI data. One of them imports the
@@ -172,6 +191,7 @@ app/                      served by vinext, Next.js style
   slice-planes-controller.ts  slice planes drawn inside the 3D volume
   compare-pane.tsx          second series with a linked cursor
   focus-timeline.tsx        registration and comparison across dates
+  learn/                    learning mode: panel, quiz, glossary tooltips, styles
   timeline-volume.tsx       NiiVue instance used by the timeline
   api/                      local HTTP API: library, imports, assets, timeline, captures
 lib/
@@ -181,17 +201,23 @@ lib/
   recent.ts                 ordering of the recent-studies list
   dates.ts                  date formatting
   analysis-contract.ts      adapter interface for a future local analysis model
+  lessons.ts                lesson types, validator, track filters, quiz scoring
+  lesson-catalog.ts         bundles every lesson in lessons/ at build time
+lessons/                  learning-mode lessons and glossary (JSON), schema.md
 scripts/
   setup.mjs                 creates the Python environment
   demo.mjs                  loads the demo study through the local API
   server.sh                 start, stop, restart, status, logs for the local server
   import_mri.py             ZIP inspection and DICOM/NIfTI conversion worker
   register_mri.py           rigid registration worker, SimpleITK
-tests/                    Node and Python tests
+  check-lessons.mjs         lessons:check
+  check_lessons.py          checks landmarks lie inside the head on the demo scan
+  gate.sh                   runs every check in order (npm run gate)
+tests/                    Node and Python tests; tests/e2e/ browser tests (Playwright)
 demo/                     demo study (Jane) as an importable ZIP
 install.sh                one-line installer for macOS and Linux
 AGENTS.md                 setup steps and rules for AI coding agents
-docs/                     user guide and the registration feature description
+docs/                     user guide, registration feature, learning mode (docs/learning-mode/)
 public/welcome/           welcome background and intro clip (generated illustrations)
 components/ui/            the few shadcn and base-ui primitives the app uses
 ```

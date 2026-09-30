@@ -34,14 +34,19 @@ fi
 
 hygiene() {
   # Medical data and the Python environment never get committed.
-  if git ls-files --cached --others --exclude-standard | grep -qE '^\.(openmri|neurospace|venv)/'; then
+  # No grep -q: with pipefail, an early grep exit can fail git with SIGPIPE.
+  if git ls-files --cached --others --exclude-standard | grep -E '^\.(openmri|neurospace|venv)/' >/dev/null; then
     echo 'The data directory or .venv is tracked or unignored.' >&2
     return 1
   fi
   # A new dependency needs a note in the progress log (CONTRIBUTING.md).
   local base
-  base="$(git merge-base HEAD origin/main 2>/dev/null || git merge-base HEAD main)"
-  git show "$base:package.json" > .gate-base-package.json
+  base="$(git merge-base HEAD origin/main 2>/dev/null || git merge-base HEAD main 2>/dev/null || true)"
+  if [[ -z "$base" ]]; then
+    echo 'No main branch to compare package.json with; fetch origin main first.' >&2
+    return 1
+  fi
+  git show "$base:package.json" > .gate-base-package.json || return 1
   node -e "
     const fs = require('fs');
     const names = (p) => Object.keys({ ...p.dependencies, ...p.devDependencies });

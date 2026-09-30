@@ -131,3 +131,18 @@ test('each track shows its own landmarks and switching keeps the position', asyn
   await expect(panel(page).getByText(/episodic memory/)).toBeVisible();
   await expectFocusAt(page, [28, -22, -18]);
 });
+
+test('opening the panel resizes the slices, so clicks land where they point', async ({
+  page,
+}) => {
+  await openStudy(page, /Jane/);
+  const slices = page.getByLabel(/Three MRI slices/);
+  const mismatch = () =>
+    slices.evaluate((c: HTMLCanvasElement) =>
+      Math.abs(c.width - c.clientWidth * window.devicePixelRatio),
+    );
+  expect(await mismatch()).toBeLessThanOrEqual(1);
+  await page.getByRole('button', { name: 'Learn' }).click();
+  await expect(panel(page)).toBeVisible();
+  await expect.poll(mismatch, { timeout: 10_000 }).toBeLessThanOrEqual(1);
+});

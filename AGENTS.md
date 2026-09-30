@@ -70,9 +70,13 @@ npm run dev          # dev server on 127.0.0.1:4173
 npm run format       # oxfmt
 npm run check        # lint, typecheck, Node tests
 npm run test:import  # Python tests, including the demo import
+npm run gate         # all checks, the build and the browser tests, in order
 ```
 
-Run all three checks before you finish. The README describes the project
+Run all three checks before you finish; `npm run gate` runs them and more.
+Learning-mode lessons are JSON in `lessons/` (see
+`docs/learning-mode/AUTHORING.md`). Never set a lesson item's review status to
+`reviewed`: only the human reviewer does that. The README describes the project
 layout; `CONTRIBUTING.md` has the rules for changes. OpenMRI is a viewer: it
 must not detect, measure, or diagnose. The demo study is the only real
 scan allowed in the repository.

@@ -108,3 +108,54 @@ test('a quiz: find by clicking, a miss shows the answer, choices explain, the be
   await expect(quiz.getByText('Best in this browser: 2 / 9')).toBeVisible();
   await page.screenshot({ path: 'test-results/quiz-result.png' });
 });
+
+test('starting a quiz from the 3D-only view brings the slices back', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page
+    .getByRole('region', { name: 'Recent studies' })
+    .getByRole('button', { name: /Jane/ })
+    .click();
+  await expect(page.getByText('Study open')).toBeVisible({ timeout: 60_000 });
+  await expect(page.locator('.intro')).toHaveCount(0, { timeout: 20_000 });
+  await page.getByRole('tab', { name: '3D' }).click();
+  const slices = page.getByLabel(/Three MRI slices/);
+  await expect(slices).toBeHidden();
+  await page.getByRole('button', { name: 'Learn' }).click();
+  const panel = page.getByRole('complementary', { name: 'Learning mode' });
+  await panel.getByRole('button', { name: /Undergraduate/ }).click();
+  await panel.getByRole('button', { name: /The brainstem/ }).click();
+  await panel.getByRole('button', { name: 'Quiz' }).click();
+  await panel.getByRole('button', { name: 'Start the quiz' }).click();
+  await expect(slices).toBeVisible();
+});
+
+test('only a primary click counts as an answer, not a right-click or drag', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page
+    .getByRole('region', { name: 'Recent studies' })
+    .getByRole('button', { name: /Jane/ })
+    .click();
+  await expect(page.getByText('Study open')).toBeVisible({ timeout: 60_000 });
+  await expect(page.locator('.intro')).toHaveCount(0, { timeout: 20_000 });
+  await page.getByRole('button', { name: 'Learn' }).click();
+  const panel = page.getByRole('complementary', { name: 'Learning mode' });
+  await panel.getByRole('button', { name: /Undergraduate/ }).click();
+  await panel.getByRole('button', { name: /The brainstem/ }).click();
+  await panel.getByRole('button', { name: 'Quiz' }).click();
+  await panel.getByRole('button', { name: 'Start the quiz' }).click();
+  await expect(
+    page.getByRole('heading', { name: /02 Axial MPRAGE/ }),
+  ).toBeVisible();
+  await expect(page.getByText('Study open')).toBeVisible({ timeout: 60_000 });
+  const check = panel.getByRole('button', { name: 'Check' });
+  const slices = page.getByLabel(/Three MRI slices/);
+  await slices.click({ button: 'right', position: { x: 150, y: 100 } });
+  await slices.click({ button: 'middle', position: { x: 150, y: 100 } });
+  await expect(check).toBeDisabled();
+  await slices.click({ position: { x: 150, y: 100 } });
+  await expect(check).toBeEnabled();
+});

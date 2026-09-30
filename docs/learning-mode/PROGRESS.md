@@ -6,10 +6,11 @@ the start of every session.
 
 ## Current state
 
-- Phase: **7 complete**. Yair approved Phase 0 and asked for all phases to be
-  completed in one run, without stopping at the intermediate 🧑 gates.
-- Next task: 8.1 learning-mode documentation.
-- Branch: `claude/elegant-albattani-nifo57`.
+- **All eight phases are built and the gate is green** (Node 41, Python 12,
+  browser 16). Branch: `claude/elegant-albattani-nifo57`.
+- Left for people, not code: the medical review (D3), the pilot with
+  students, and asking the upstream author before public release (D1).
+  See "Definition of done" at the end.
 
 ## Decisions
 
@@ -350,3 +351,46 @@ Errors caught by the loop:
   (jumps land exactly with reduced motion on). That the glide is skipped is
   proven by the existing deterministic unit test in
   `tests/focus-controller.test.mjs`.
+
+### CP-8 · Documentation, review pass, release check · 2026-09-30
+
+Gate: all green, exit code 0 (Node 41/41, Python 12/12, browser 16/16)
+Acceptance: [x] 8.1 `docs/learning-mode/README.md` with three screenshots of
+the demo (JPEG, ~140 KB each) [x] 8.2 `AUTHORING.md`: following it with two
+deliberate mistakes (missing undergraduate text, a point in front of the
+forehead), both checks failed with the exact messages the guide shows
+[x] 8.3 README section, project layout, commands, and credit to the upstream
+author; CONTRIBUTING and AGENTS updated, including "never mark content
+reviewed on someone's behalf"
+Look-back: Phases 0–7 re-run in the gate: green.
+
+Review step (adversarial read of the full diff, then `/code-review`):
+
+| Finding                                                                                                          | Verdict                                                                                                        | Action                                                               |
+| ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Starting a quiz from the 3D-only view left the slices hidden, so find questions could not be answered (own read) | Real; browser test failed first                                                                                | Starting a quiz shows the slices                                     |
+| Resize not triggered when the Learn panel opens                                                                  | Not reproducible: `workspace.css` gives the sidebar the same width with or without a panel at every breakpoint | Effect now watches `panelOpen` for consistency; test kept as a guard |
+| `grep -q` under `pipefail` can hide a tracked `.venv/`                                                           | Real: with 300 000 paths the old form exited 1 (missed)                                                        | Fixed; new form caught it                                            |
+| Dependency check silently compares with the index when no `main` exists                                          | Real                                                                                                           | Hygiene now fails with a message                                     |
+| A click while a series is loading counts as an answer                                                            | Real in code                                                                                                   | Input during loading is ignored                                      |
+| Right/middle-button drags count as answers                                                                       | Did not reproduce (test passed before the fix; NiiVue appears to stop those events)                            | Only primary clicks count, explicitly; test kept                     |
+
+## Definition of done (PLAN.md §8), honest status
+
+- [x] All P0 and P1 requirements pass their acceptance checks (FR-1 to FR-18).
+- [x] Gate green on the final commit. CI: runs on pull requests and `main`;
+      not yet run for this branch (no pull request opened).
+- [ ] **≥ 15 undergraduate landmarks reviewed: 0 of 22.** All content is
+      draft by design; it needs the reviewer (D3).
+- [x] A checkpoint for every phase; no open _Blocked_ items.
+- [ ] **D1 open:** ask Maksim Khuzin before publishing the lessons.
+- [ ] D2 and D5 are settled during content review.
+
+Known limitations:
+
+- A find question in a `sequence-compare` lesson must be answered on the
+  main slices (pane A); clicks in pane B are not counted. The shipped
+  sequence lessons use choice questions only.
+- The README's install commands still clone the upstream repository, which
+  has no learning mode. Pointing them at this fork is the maintainer's
+  decision (e.g. if the work is offered upstream instead).

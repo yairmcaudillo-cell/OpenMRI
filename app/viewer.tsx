@@ -466,7 +466,7 @@ export default function Viewer({
       80,
     );
     return () => clearTimeout(timer);
-  }, [mode, ready, immersive, compact, overviewOpen]);
+  }, [mode, ready, immersive, compact, panelOpen]);
 
   useEffect(() => {
     const controller = planesRef.current;
@@ -858,10 +858,11 @@ export default function Viewer({
             onShow={showPoint}
             onSeries={(id, compareWith) => {
               if (id !== selectedId) setSelectedId(id);
+              // Quizzes are answered on the slices, so they must be visible.
               if (compareWith) {
                 setCompareId(compareWith);
                 setMode('compare');
-              }
+              } else if (mode !== 'both' && mode !== 'slices') setMode('both');
             }}
             onClose={() => setLearnOpen(false)}
           />
@@ -1270,8 +1271,13 @@ export default function Viewer({
               <canvas
                 ref={sliceCanvas}
                 aria-label="Three MRI slices. Click to pick a point, scroll to move the slice."
-                onPointerUp={() => setSliceInput((n) => n + 1)}
-                onWheelCapture={() => setSliceInput((n) => n + 1)}
+                onPointerUp={(e) => {
+                  // Primary clicks only: other buttons adjust or pan the view.
+                  if (e.button === 0 && !loading) setSliceInput((n) => n + 1);
+                }}
+                onWheelCapture={() => {
+                  if (!loading) setSliceInput((n) => n + 1);
+                }}
               />
               {sliceNames.map((name, i) => (
                 <div className={`slice-overlay slice-${i}`} key={name}>
