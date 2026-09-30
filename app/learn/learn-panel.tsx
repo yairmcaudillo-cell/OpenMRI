@@ -12,7 +12,6 @@ import {
   TRACK_LABELS,
   landmarksFor,
   lessonsFor,
-  plainText,
   resolveSeries,
   type Lesson,
   type Review,
@@ -20,7 +19,8 @@ import {
   type Vec3,
 } from '@/lib/lessons';
 import { LESSONS } from '@/lib/lesson-catalog';
-import { saveTrack, savedTrack } from './track';
+import GlossaryText from './glossary-text';
+import { saveGlossary, saveTrack, savedGlossary, savedTrack } from './track';
 
 export type LearnSeries = {
   id: string;
@@ -56,12 +56,16 @@ export default function LearnPanel({
 }) {
   // Only rendered after a click in the browser, so storage is readable here.
   const [track, setTrack] = useState<Track | null>(savedTrack);
+  const [definitions, setDefinitions] = useState(() =>
+    savedGlossary(savedTrack() ?? 'undergrad'),
+  );
   const [lessonId, setLessonId] = useState('');
   const [landmarkId, setLandmarkId] = useState('');
 
   const chooseTrack = (next: Track) => {
     setTrack(next);
     saveTrack(next);
+    setDefinitions(savedGlossary(next));
   };
   const lessons = track ? lessonsFor(LESSONS, track) : [];
   const lesson = lessons.find((l) => l.id === lessonId);
@@ -165,8 +169,22 @@ export default function LearnPanel({
               <h2>{lesson.title[track]}</h2>
               <DraftBadge review={lesson.review} />
               <p className="lesson-summary">
-                {plainText(lesson.summary[track] ?? '')}
+                <GlossaryText
+                  text={lesson.summary[track] ?? ''}
+                  definitions={definitions}
+                />
               </p>
+              <label className="definitions-toggle">
+                <input
+                  type="checkbox"
+                  checked={definitions}
+                  onChange={(e) => {
+                    setDefinitions(e.target.checked);
+                    saveGlossary(track, e.target.checked);
+                  }}
+                />
+                Show definitions
+              </label>
               {!referenceId && (
                 <p className="learn-error" role="alert">
                   The series this lesson uses, {lesson.referenceSeries}, is not
@@ -178,7 +196,12 @@ export default function LearnPanel({
                 <article className="landmark-card" aria-live="polite">
                   <h3>{landmark.name}</h3>
                   <DraftBadge review={landmark.review} />
-                  <p>{plainText(landmark.text[track] ?? '')}</p>
+                  <p>
+                    <GlossaryText
+                      text={landmark.text[track] ?? ''}
+                      definitions={definitions}
+                    />
+                  </p>
                   <div className="landmark-steps">
                     <button
                       aria-label="Previous landmark"

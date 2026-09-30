@@ -6,9 +6,9 @@ the start of every session.
 
 ## Current state
 
-- Phase: **3 complete**. Yair approved Phase 0 and asked for all phases to be
+- Phase: **4 complete**. Yair approved Phase 0 and asked for all phases to be
   completed in one run, without stopping at the intermediate 🧑 gates.
-- Next task: 4.2 glossary tooltips.
+- Next task: 5.3 quiz panel.
 - Branch: `claude/elegant-albattani-nifo57`.
 
 ## Decisions
@@ -219,3 +219,25 @@ Errors caught by the loop before commit:
 Also: browser tests import a small synthetic NIfTI study (global setup) so
 "not the demo" is tested against a real import. `actionTimeout` 15 s keeps a
 missing element from costing the full 2-minute test timeout.
+
+### CP-4 · Glossary · 2026-09-30
+
+Gate: all green (browser 9/9)
+Acceptance: [x] FR-13 linked terms show their definition on hover and on
+keyboard focus, as the button's accessible description [x] Escape hides the
+definition (WCAG 1.4.13) [x] on for undergraduates, off for medical students
+until "Show definitions" is ticked; remembered per track
+Look-back: Phases 0–3 re-run in the gate: green.
+Test-first: both glossary browser tests failed before the component existed.
+
+Errors caught by the loop before commit:
+
+- The medical glossary test timed out on a visible checkbox. A debug run
+  showed `evaluate` itself timing out: the page's main thread was busy.
+  Clicking a landmark switches series, and under software WebGL the volume
+  load blocks the page for 15 s or more. Existing behaviour of series
+  switching on a GPU-less machine, not a learning-mode bug; the test now
+  waits for the switch to finish before interacting.
+
+Deviation: task 4.1 (auto-matching) replaced by explicit links, as recorded
+in CP-1.

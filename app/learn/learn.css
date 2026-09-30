@@ -232,3 +232,58 @@
   color: #666;
   cursor: default;
 }
+/* Glossary terms: underlined, definition on hover or keyboard focus. */
+.glossary {
+  position: relative;
+}
+.glossary-term {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #d9ccff;
+  font: inherit;
+  text-decoration: underline dotted #b79dff;
+  text-underline-offset: 3px;
+  cursor: help;
+}
+.glossary-tip {
+  display: none;
+  position: absolute;
+  z-index: 20;
+  left: 0;
+  top: 100%;
+  width: 200px;
+  padding: 9px 11px;
+  border: 1px solid #4a3a66;
+  border-radius: 8px;
+  background: #140e20;
+  color: #ddd;
+  font-size: 11px;
+  line-height: 1.5;
+  box-shadow: 0 8px 24px #000a;
+}
+.glossary-tip strong {
+  display: block;
+  color: #fff;
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+.glossary:hover .glossary-tip,
+.glossary-term:focus .glossary-tip,
+.glossary-term:focus + .glossary-tip {
+  display: block;
+}
+.definitions-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #ccc;
+  cursor: pointer;
+}
+.definitions-toggle input {
+  accent-color: #8052ff;
+  width: 15px;
+  height: 15px;
+}
