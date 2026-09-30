@@ -6,9 +6,9 @@ the start of every session.
 
 ## Current state
 
-- Phase: **6 complete**. Yair approved Phase 0 and asked for all phases to be
+- Phase: **7 complete**. Yair approved Phase 0 and asked for all phases to be
   completed in one run, without stopping at the intermediate 🧑 gates.
-- Next task: 7.1 keyboard walk-through.
+- Next task: 8.1 learning-mode documentation.
 - Branch: `claude/elegant-albattani-nifo57`.
 
 ## Decisions
@@ -319,3 +319,34 @@ Re-running the gate then exposed two issues:
   15 s to 45 s with a comment; the 2-minute test limit is unchanged.
 
 Gate: all green (exit code 0), browser 11/11.
+
+### CP-7 · Accessibility · 2026-09-30
+
+Gate: all green, exit code 0 (Node 41/41, browser 13/13)
+Acceptance: [x] FR-18 keyboard only: Learn, track, lesson, landmark, back,
+all with Tab and Enter (browser test) [x] focus follows each step: when the
+picker or a list is replaced, focus moves to the new heading instead of the
+page [x] visible focus ring on every panel control [x] contrast: 16 text
+pairs ≥ 4.5:1 and 4 ring/border pairs ≥ 3:1 (unit test, proven to fail on a
+3.66:1 pair) [x] state never by colour alone: badges, answers and feedback
+carry ✎ ✓ ✕ marks and words [x] `jsx-a11y` lint clean
+Look-back: Phases 0–6 re-run in the gate: green.
+
+Errors caught by the loop:
+
+- **Real gap:** after choosing a track, opening a lesson or going back, the
+  button that had focus disappeared and keyboard focus fell to the page.
+  Found by the keyboard test (written first, failed); fixed by focusing the
+  new heading.
+- Test helper bug: tabbing past the last control makes `<body>` active, and
+  its text contains every label, so the helper "found" the wrong element.
+  It now skips the body.
+- **Reduced motion, honest limit:** `test.use({ reducedMotion })` in a
+  describe block did not reach the page (`matchMedia` reported false), so
+  the first version tested nothing; now `page.emulateMedia` sets it and the
+  test asserts the media query first. A mutation run (reduced motion off)
+  still passed: without a GPU the page often paints no in-between frame of
+  the 110 ms glide. The browser test is therefore named for what it proves
+  (jumps land exactly with reduced motion on). That the glide is skipped is
+  proven by the existing deterministic unit test in
+  `tests/focus-controller.test.mjs`.

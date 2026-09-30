@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import {
   ArrowLeft,
   ChevronLeft,
@@ -65,6 +65,14 @@ export default function LearnPanel({
   const [landmarkId, setLandmarkId] = useState('');
   const [quiz, setQuiz] = useState(false);
 
+  // When a view is replaced, keyboard focus moves to its heading instead of
+  // falling back to the page.
+  const ids = useId();
+  const listHeading = `${ids}-lessons`;
+  const lessonHeading = `${ids}-lesson`;
+  const focusSoon = (id: string) =>
+    requestAnimationFrame(() => document.getElementById(id)?.focus());
+
   const chooseTrack = (next: Track) => {
     setTrack(next);
     saveTrack(next);
@@ -117,7 +125,13 @@ export default function LearnPanel({
             of the text and the quiz change. You can switch at any time.
           </p>
           {TRACKS.map((t) => (
-            <button key={t} onClick={() => chooseTrack(t)}>
+            <button
+              key={t}
+              onClick={() => {
+                chooseTrack(t);
+                focusSoon(listHeading);
+              }}
+            >
               <strong>{TRACK_LABELS[t]}</strong>
               <small>{TRACK_HINTS[t]}</small>
             </button>
@@ -144,7 +158,9 @@ export default function LearnPanel({
 
           {!lesson ? (
             <nav className="lesson-list" aria-label="Lessons">
-              <h2>Lessons</h2>
+              <h2 id={listHeading} tabIndex={-1}>
+                Lessons
+              </h2>
               {lessons.map((l) => (
                 <button
                   key={l.id}
@@ -152,6 +168,7 @@ export default function LearnPanel({
                     setLessonId(l.id);
                     setLandmarkId('');
                     setQuiz(false);
+                    focusSoon(lessonHeading);
                   }}
                 >
                   <span className="lesson-order">
@@ -175,11 +192,14 @@ export default function LearnPanel({
                 onClick={() => {
                   setLessonId('');
                   setLandmarkId('');
+                  focusSoon(listHeading);
                 }}
               >
                 <ArrowLeft size={14} /> All lessons
               </button>
-              <h2>{lesson.title[track]}</h2>
+              <h2 id={lessonHeading} tabIndex={-1}>
+                {lesson.title[track]}
+              </h2>
               <DraftBadge review={lesson.review} />
               <p className="lesson-summary">
                 <GlossaryText
