@@ -92,17 +92,25 @@ function removeLegacyStudies(d: DatabaseSync) {
     console.warn('Could not clean up retired studies:', error);
   }
 }
-/** SHA-256 of demo/jane-head-mri.zip. Learning mode recognises the demo by it, never by name. */
-export const DEMO_ARCHIVE_SHA256 =
-  '247b778cc557f6b474ed154cc56841cb8faaad05bf9d5456bee7f2c0cc213124';
-/** Studies for the library listing, newest first, each with a `demo` flag. */
+/**
+ * Teaching cases by the SHA-256 of their archive: the demo study and the
+ * glioma case built by scripts/fetch_teaching_case.py. Learning mode
+ * recognises them by hash, never by the patient's name.
+ */
+export const TEACHING_CASES = {
+  jane: '247b778cc557f6b474ed154cc56841cb8faaad05bf9d5456bee7f2c0cc213124',
+  glioma: 'eff28d5f4ff9e4646753bc386e0c745e40e36b0e8097b58a562b755ab6e7b5b7',
+} as const;
+export type TeachingCase = keyof typeof TEACHING_CASES;
+/** Studies for the library listing, newest first, each with its teaching case or null. */
 export function catalogStudies() {
+  const cases = Object.entries(TEACHING_CASES);
   return db()
     .prepare(
-      'SELECT id,patient_id,date,label,body_part,created_at,source_hash=? AS demo FROM studies ORDER BY date DESC',
+      `SELECT id,patient_id,date,label,body_part,created_at,CASE source_hash ${cases.map(() => 'WHEN ? THEN ?').join(' ')} END AS teachingCase FROM studies ORDER BY date DESC`,
     )
-    .all(DEMO_ARCHIVE_SHA256)
-    .map((row) => ({ ...row, demo: row.demo === 1 }));
+    .all(...cases.flatMap(([id, hash]) => [hash, id]))
+    .map((row) => ({ ...row, teachingCase: row.teachingCase ?? null }));
 }
 export function localMutation(request: Request) {
   const url = new URL(request.url);

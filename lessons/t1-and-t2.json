@@ -1,6 +1,7 @@
 {
   "id": "t1-and-t2",
   "kind": "sequence-compare",
+  "case": "jane",
   "order": 4,
   "tracks": ["undergrad", "med"],
   "title": {

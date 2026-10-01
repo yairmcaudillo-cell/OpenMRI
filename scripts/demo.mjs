@@ -1,11 +1,15 @@
-// Loads the demo study as patient "Jane" through the local API and
+// Loads a teaching case through the local API: the demo study as patient
+// "Jane" (default), or with --case glioma the glioma case from the Medical
+// Segmentation Decathlon (downloaded by scripts/fetch_teaching_case.py).
+//
+// For the demo it loads the study as patient "Jane" and
 // opens the welcome screen, where Jane's study is the first recent study.
 // Clicking it plays the entering transition with sound; browsers only allow
 // sound after a click, so the script does not open the study itself.
 // Running it again reuses the demo that is already in the library. Needs a
 // running server: `npm run demo` starts one first.
 //
-//   node scripts/demo.mjs [--no-open]
+//   node scripts/demo.mjs [--no-open] [--case glioma]
 import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -13,14 +17,25 @@ import path from 'node:path';
 // OPENMRI_PORT lets the browser tests load the demo into their own server.
 // The host stays 127.0.0.1.
 const BASE = `http://127.0.0.1:${Number(process.env.OPENMRI_PORT) || 4173}`;
-const ARCHIVE = path.join(
-  import.meta.dirname,
-  '..',
-  'demo',
-  'jane-head-mri.zip',
-);
-/** Written into the patient's notes, so a real patient called Jane is never reused. */
-const MARKER = 'Demo study shipped with OpenMRI (demo/jane-head-mri.zip).';
+const ROOT = path.join(import.meta.dirname, '..');
+const GLIOMA = process.argv.includes('--case')
+  ? process.argv[process.argv.indexOf('--case') + 1] === 'glioma'
+  : false;
+const CASE = GLIOMA
+  ? {
+      archive: path.join(ROOT, '.cache', 'glioma-teaching-case.zip'),
+      name: 'Glioma teaching case',
+      // Written into the notes, so no real patient record is ever reused.
+      marker:
+        'Glioma teaching case BRATS_449, Medical Segmentation Decathlon (CC BY-SA 4.0).',
+    }
+  : {
+      archive: path.join(ROOT, 'demo', 'jane-head-mri.zip'),
+      name: 'Jane',
+      marker: 'Demo study shipped with OpenMRI (demo/jane-head-mri.zip).',
+    };
+const ARCHIVE = CASE.archive;
+const MARKER = CASE.marker;
 const openBrowser = !process.argv.includes('--no-open');
 
 async function api(route, options = {}) {
@@ -82,7 +97,22 @@ async function main() {
     return finish();
   }
 
-  console.log('Importing the demo study as patient Jane.');
+  if (GLIOMA) {
+    // Downloads two files by byte range and checks their fingerprints.
+    console.log('Fetching the glioma teaching case (about 7 MB).');
+    const python = path.join(ROOT, '.venv', 'bin', 'python');
+    const r = spawnSync(
+      python,
+      [path.join(ROOT, 'scripts', 'fetch_teaching_case.py'), ARCHIVE],
+      {
+        stdio: 'inherit',
+      },
+    );
+    if (r.status !== 0) throw new Error('The glioma case could not be fetched');
+  }
+  console.log(
+    `Importing the ${GLIOMA ? 'glioma teaching case' : 'demo study'} as patient ${CASE.name}.`,
+  );
   const { id } = await api(
     '/api/library/imports',
     json('POST', { filename: path.basename(ARCHIVE) }),
@@ -97,7 +127,7 @@ async function main() {
     await api(
       `/api/library/imports/${id}`,
       json('POST', {
-        patient: jane ? { id: jane.id } : { name: 'Jane', notes: MARKER },
+        patient: jane ? { id: jane.id } : { name: CASE.name, notes: MARKER },
       }),
     );
     const done = await waitFor(id, 'complete', 900);
@@ -122,7 +152,7 @@ async function main() {
 
 function finish() {
   console.log(
-    `Jane's study is ready. Open ${BASE}/ and click Jane under Recent studies.`,
+    `${CASE.name}'s study is ready. Open ${BASE}/ and click ${CASE.name} under Recent studies.`,
   );
   open(`${BASE}/`);
 }

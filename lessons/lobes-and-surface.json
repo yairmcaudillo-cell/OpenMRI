@@ -1,6 +1,7 @@
 {
   "id": "lobes-and-surface",
   "kind": "landmarks",
+  "case": "jane",
   "order": 1,
   "tracks": ["undergrad", "med"],
   "title": {

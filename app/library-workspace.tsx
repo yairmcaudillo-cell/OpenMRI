@@ -21,6 +21,7 @@ import Welcome from './welcome';
 import Intro from './intro';
 import { displayDate } from '@/lib/dates';
 import { rememberOpened } from '@/lib/recent';
+import type { CaseId } from '@/lib/lessons';
 export type Patient = {
   id: string;
   name: string;
@@ -35,8 +36,8 @@ export type StudyRecord = {
   label: string;
   body_part: string;
   created_at: string;
-  /** The study came from the shipped demo archive; learning mode is offered. */
-  demo?: boolean;
+  /** Teaching case the study is (by archive hash); learning mode is offered on these. */
+  teachingCase?: CaseId | null;
 };
 type Catalog = {
   patients: Patient[];

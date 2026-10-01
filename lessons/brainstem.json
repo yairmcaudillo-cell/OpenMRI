@@ -1,6 +1,7 @@
 {
   "id": "brainstem",
   "kind": "landmarks",
+  "case": "jane",
   "order": 3,
   "tracks": ["undergrad", "med"],
   "title": {

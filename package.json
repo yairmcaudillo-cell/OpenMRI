@@ -48,7 +48,8 @@
     "build:online": ".venv/bin/python scripts/build_online_data.py online/public/data && cp public/favicon.svg online/public/ && vite build --config vite.online.config.ts",
     "preview:online": "vite preview --config vite.online.config.ts",
     "test:online": "playwright test --config playwright.online.config.ts",
-    "theme": "node scripts/light-theme.mjs"
+    "theme": "node scripts/light-theme.mjs",
+    "demo:pathology": "bash scripts/server.sh start --no-open && node scripts/demo.mjs --case glioma"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",

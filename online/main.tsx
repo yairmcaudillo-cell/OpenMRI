@@ -11,12 +11,13 @@ import Viewer from '../app/viewer';
 import type { Patient, StudyRecord } from '../app/library-workspace';
 import { demoCatalogUrl } from '@/lib/online';
 
-type Catalogue = { patient: Patient; studies: StudyRecord[] };
+type Catalogue = { patients: Patient[]; studies: StudyRecord[] };
 const none = () => {};
 
-/** The online demo: the viewer on the demo study, learning mode open. */
+/** The online demo: the viewer on a teaching case, learning mode open. */
 function OnlineDemo() {
   const [catalogue, setCatalogue] = useState<Catalogue | null>(null);
+  const [patientId, setPatientId] = useState('');
   const [error, setError] = useState('');
   useEffect(() => {
     fetch(demoCatalogUrl())
@@ -32,12 +33,15 @@ function OnlineDemo() {
   if (error)
     return <p className="online-message">The demo could not load ({error}).</p>;
   if (!catalogue) return <p className="online-message">Loading the demo…</p>;
+  const patient =
+    catalogue.patients.find((p) => p.id === patientId) ?? catalogue.patients[0];
   return (
     <Viewer
-      patient={catalogue.patient}
-      studies={catalogue.studies}
-      patients={[catalogue.patient]}
-      onPatient={none}
+      key={patient.id}
+      patient={patient}
+      studies={catalogue.studies.filter((s) => s.patient_id === patient.id)}
+      patients={catalogue.patients}
+      onPatient={setPatientId}
       onLibrary={none}
       onImport={none}
       onEdit={none}

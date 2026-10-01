@@ -12,6 +12,13 @@ export const TRACK_LABELS: Record<Track, string> = {
   med: 'Medical student',
 };
 export type Vec3 = [number, number, number];
+/** Teaching cases: the demo study and the glioma case (lib/library.ts). */
+export const CASES = ['jane', 'glioma'] as const;
+export type CaseId = (typeof CASES)[number];
+/** An expert region of a label map, as the lesson names and colours it. */
+export type Region = { value: number; name: string; color: string };
+/** Credit for third-party data, shown with the lesson. */
+export type Source = { text: string; url: string; license: string };
 /** Text written once per track. Every track the item belongs to needs text. */
 export type TrackText = Partial<Record<Track, string>>;
 
@@ -29,6 +36,8 @@ export type Landmark = {
   text: TrackText;
   /** How close a quiz click must be, in mm. At least 3 (PROGRESS.md CP-0.3). */
   toleranceMm: number;
+  /** The expert region the point lies in, checked on the real scan. */
+  region?: number;
   review: Review;
 };
 
@@ -55,6 +64,8 @@ export type Question = FindQuestion | ChoiceQuestion;
 export type Lesson = {
   id: string;
   kind: 'landmarks' | 'sequence-compare';
+  /** The teaching case the lesson is placed on. */
+  case: CaseId;
   /** Position in the lesson list, from 1. */
   order: number;
   tracks: Track[];
@@ -64,6 +75,10 @@ export type Lesson = {
   referenceSeries: string;
   /** Second series shown side by side, only for `sequence-compare`. */
   compareSeries?: string;
+  /** Label-map series whose regions the lesson shows on the slices and in 3D. */
+  labelSeries?: string;
+  regions?: Region[];
+  source?: Source;
   landmarks: Landmark[];
   questions: Question[];
   review: Review;
@@ -167,6 +182,46 @@ export function validateLesson(input: unknown): string[] {
     errors.push(`${where}: kind must be "landmarks" or "sequence-compare"`);
   if (!Number.isInteger(input.order) || (input.order as number) < 1)
     errors.push(`${where}: order must be a whole number from 1`);
+  if (!CASES.includes(input.case as CaseId))
+    errors.push(`${where}: case must be one of ${CASES.join(', ')}`);
+  const regionValues = new Set<number>();
+  if (input.regions !== undefined) {
+    if (!nonEmpty(input.labelSeries))
+      errors.push(`${where}: regions need a labelSeries`);
+    if (!Array.isArray(input.regions) || !input.regions.length)
+      errors.push(`${where}: regions must be a non-empty list`);
+    else
+      for (const r of input.regions as unknown[]) {
+        if (
+          !isObject(r) ||
+          !Number.isInteger(r.value) ||
+          (r.value as number) < 1
+        ) {
+          errors.push(`${where}: each region has a whole-number value from 1`);
+          continue;
+        }
+        const value = r.value as number;
+        if (regionValues.has(value))
+          errors.push(`${where}: region value ${value} is used twice`);
+        regionValues.add(value);
+        if (!nonEmpty(r.name)) errors.push(`${where}: region needs a name`);
+        if (typeof r.color !== 'string' || !/^#[0-9a-f]{6}$/i.test(r.color))
+          errors.push(`${where}: region ${value} colour must be #rrggbb`);
+      }
+  } else if (input.labelSeries !== undefined)
+    errors.push(`${where}: labelSeries needs regions`);
+  if (input.source !== undefined) {
+    const src = input.source;
+    if (
+      !isObject(src) ||
+      !nonEmpty(src.text) ||
+      !nonEmpty(src.url) ||
+      !nonEmpty(src.license)
+    )
+      errors.push(`${where}: source needs text, url and license`);
+    else if (!src.url.startsWith('https://'))
+      errors.push(`${where}: source url must be https`);
+  }
   const tracks = checkTracks(input.tracks, TRACKS, where, errors);
   checkText(input.title, tracks, `${where} title`, errors);
   checkText(input.summary, tracks, `${where} summary`, errors);
@@ -215,6 +270,10 @@ export function validateLesson(input: unknown): string[] {
           `${at}: toleranceMm must be between ${MIN_TOLERANCE_MM} and ${MAX_TOLERANCE_MM}`,
         );
       checkReview(raw.review, at, errors);
+      if (raw.region !== undefined && !regionValues.has(raw.region as number))
+        errors.push(
+          `${at}: region ${show(raw.region)} is not one of the lesson's regions`,
+        );
       if (typeof raw.id === 'string') landmarks.set(raw.id, own);
     });
 
@@ -354,8 +413,8 @@ export const plainText = (text: string) =>
     .map((p) => p.text)
     .join('');
 
-export const lessonsFor = (lessons: Lesson[], track: Track) =>
-  lessons.filter((l) => l.tracks.includes(track));
+export const lessonsFor = (lessons: Lesson[], track: Track, caseId: CaseId) =>
+  lessons.filter((l) => l.case === caseId && l.tracks.includes(track));
 export const landmarksFor = (lesson: Lesson, track: Track) =>
   lesson.landmarks.filter((l) => l.tracks.includes(track));
 export const questionsFor = (lesson: Lesson, track: Track) =>

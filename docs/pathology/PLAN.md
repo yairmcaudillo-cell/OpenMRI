@@ -101,3 +101,15 @@ Errors caught by the loop:
   the volume's first index.
 - `03 T1 with contrast` did not get the contrast tag (the importer looks for
   `+C`); renamed `03 T1 +C`, archive rebuilt.
+
+### CP-T3 · Teaching cases · 2026-10-01
+
+The demo flag became a case id: `TEACHING_CASES` maps `jane` and `glioma` to
+archive hashes, and each study reports `teachingCase`. Every lesson names its
+`case`; the panel lists only the open case's lessons. The lesson schema gains
+`labelSeries`, `regions` (value, name, colour), `source` (text, https url,
+license) and a landmark `region`, each validated. `npm run demo:pathology`
+fetches, packs and imports the case; the online build imports both cases and
+ships their meshes. Errors caught: a hashing tie in study order made a test
+depend on insertion order (now first by date plus the set), and a JSON rewrite
+of the lessons broke their formatting (`npm run format`).

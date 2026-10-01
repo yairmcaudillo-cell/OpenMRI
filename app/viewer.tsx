@@ -154,9 +154,11 @@ export default function Viewer({
     comparisonCanvas.current = canvas;
     setComparisonReady(!!canvas);
   }, []);
-  // Learning mode is offered on the shipped demo study only (lib/library.ts).
-  const isDemo = studies.find((s) => s.id === studyKey)?.demo === true;
-  const learning = learnOpen && isDemo;
+  // Learning mode is offered on teaching cases only, recognised by archive
+  // hash (lib/library.ts): the demo study and the glioma case.
+  const teachingCase =
+    studies.find((s) => s.id === studyKey)?.teachingCase ?? null;
+  const learning = learnOpen && !!teachingCase;
   const panelOpen = overviewOpen || learning;
   const studyDate = displayDate(
     studies.find((s) => s.id === studyKey)?.date || '',
@@ -794,7 +796,7 @@ export default function Viewer({
               </button>
             </>
           )}
-          {isDemo && (
+          {teachingCase && (
             <button
               className={`header-toggle ${learning ? 'active' : ''}`}
               aria-pressed={learning}
@@ -882,6 +884,8 @@ export default function Viewer({
         )}
         {learning && (
           <LearnPanel
+            key={teachingCase}
+            caseId={teachingCase}
             series={manifest?.series ?? []}
             point={hasFocus && point ? point.mm : null}
             sliceInput={sliceInput}

@@ -14,6 +14,7 @@ import {
   lessonsFor,
   resolveSeries,
   type Lesson,
+  type CaseId,
   type Track,
   type Vec3,
 } from '@/lib/lessons';
@@ -36,6 +37,7 @@ const TRACK_HINTS: Record<Track, string> = {
 };
 
 export default function LearnPanel({
+  caseId,
   series,
   point,
   sliceInput,
@@ -44,6 +46,8 @@ export default function LearnPanel({
   onSeries,
   onClose,
 }: {
+  /** The open study's teaching case; only its lessons are listed. */
+  caseId: CaseId;
   series: LearnSeries[];
   /** The viewer's focus in mm while visible; a new array on every move. */
   point: number[] | null;
@@ -78,7 +82,7 @@ export default function LearnPanel({
     saveTrack(next);
     setDefinitions(savedGlossary(next));
   };
-  const lessons = track ? lessonsFor(LESSONS, track) : [];
+  const lessons = track ? lessonsFor(LESSONS, track, caseId) : [];
   const lesson = lessons.find((l) => l.id === lessonId);
   const landmarks = lesson && track ? landmarksFor(lesson, track) : [];
   const index = landmarks.findIndex((l) => l.id === landmarkId);
