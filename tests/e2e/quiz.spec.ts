@@ -11,7 +11,7 @@ async function focusAt(page: Page, point: number[]) {
         );
         return Math.max(...at.map((v, i) => Math.abs(v - point[i])));
       },
-      { timeout: 30_000 },
+      { timeout: 60_000 },
     )
     .toBeLessThanOrEqual(1);
 }

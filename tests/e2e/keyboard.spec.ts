@@ -48,7 +48,7 @@ test('learning mode works with the keyboard alone, and focus follows each step',
     timeout: 60_000,
   });
   await expect(page.locator('.coordinate-readout')).toContainText('12.0', {
-    timeout: 30_000,
+    timeout: 60_000,
   });
 
   // Back to the list: focus returns to the list heading.
@@ -86,7 +86,7 @@ test('with reduced motion on, landmark jumps still land on the landmark', async 
   await panel.getByRole('button', { name: /The brainstem/ }).click();
   await panel.getByRole('button', { name: 'Midbrain' }).click();
   await expect(page.locator('.coordinate-readout')).toContainText('-14.0', {
-    timeout: 30_000,
+    timeout: 60_000,
   });
   await expect(page.getByText('Study open')).toBeVisible({ timeout: 60_000 });
 

@@ -8,7 +8,8 @@ export const E2E_DATA_DIR = '.e2e-data';
 
 export default defineConfig({
   testDir: 'tests/e2e',
-  timeout: 120_000,
+  // Software WebGL on shared CI runners: one series switch can take ~45 s.
+  timeout: 180_000,
   workers: 1,
   retries: 0,
   reporter: [['list']],

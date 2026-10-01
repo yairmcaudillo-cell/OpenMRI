@@ -202,6 +202,9 @@ export default function Viewer({
   const focusRef = useRef<FocusController | null>(null);
   const pendingBookmark = useRef<Point | null>(null);
   const paletteRef = useRef('silver');
+  // What the loaded volume already shows, so the effects below skip a costly
+  // GPU update (seconds with software WebGL) that would change nothing.
+  const applied = useRef({ palette: '', brightness: 100 });
   useEffect(() => {
     paletteRef.current = palette;
   }, [palette]);
@@ -416,6 +419,7 @@ export default function Viewer({
           pair.render.volumes[0].id,
           paletteMaps[paletteRef.current],
         );
+        applied.current = { palette: paletteRef.current, brightness: 100 };
         await pair.render.setVolumeRenderIllumination(0.45);
         await pair.render.setGradientOpacity(0.12, 0.06);
         if (!active) return;
@@ -570,8 +574,10 @@ export default function Viewer({
 
   useEffect(() => {
     const nv = engines.current?.render;
-    if (nv?.volumes[0] && !loading)
+    if (nv?.volumes[0] && !loading && applied.current.palette !== palette) {
       nv.setColormap(nv.volumes[0].id, paletteMaps[palette]);
+      applied.current.palette = palette;
+    }
   }, [palette, loading]);
 
   useEffect(() => {
@@ -581,10 +587,11 @@ export default function Viewer({
   }, [cut, depth, axis, ready, loading]);
 
   useEffect(() => {
-    if (loading || !study) return;
+    if (loading || !study || applied.current.brightness === brightness) return;
     const timer = window.setTimeout(() => {
       const nv = engines.current?.render;
       if (!nv?.volumes[0]) return;
+      applied.current.brightness = brightness;
       nv.volumes[0].cal_min = study.displayRange[0];
       nv.volumes[0].cal_max = (study.displayRange[1] * 100) / brightness;
       nv.updateGLVolume();
