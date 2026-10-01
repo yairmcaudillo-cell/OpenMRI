@@ -5,6 +5,8 @@ import '../app/globals.css';
 import '../app/workspace.css';
 import '../app/focus-timeline.css';
 import '../app/learn/learn.css';
+import '../app/light.css';
+import '../app/light-fixes.css';
 import Viewer from '../app/viewer';
 import type { Patient, StudyRecord } from '../app/library-workspace';
 import { demoCatalogUrl } from '@/lib/online';

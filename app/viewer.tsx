@@ -7,6 +7,7 @@ import type { SlicePlanesController } from './slice-planes-controller';
 import ComparePane from './compare-pane';
 import StudyOverview from './study-overview';
 import LearnPanel from './learn/learn-panel';
+import ThemeToggle from './theme-toggle';
 import FocusTimeline from './focus-timeline';
 import type { Vec3 } from '@/lib/focus-timeline';
 import type { Patient, StudyRecord } from './library-workspace';
@@ -819,6 +820,7 @@ export default function Viewer({
             <ShieldCheck size={15} />{' '}
             {ONLINE ? 'Runs in your browser' : 'Runs locally'}
           </span>
+          <ThemeToggle />
           <Dialog>
             <DialogTrigger
               className="icon-button"
@@ -1243,7 +1245,7 @@ export default function Viewer({
               </p>
             </div>
           )}
-          <div className={`scan-stage mode-${mode}`}>
+          <div className={`scan-stage mri-stage mode-${mode}`}>
             <div
               className="render-pane"
               style={{

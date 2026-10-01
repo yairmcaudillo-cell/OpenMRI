@@ -21,6 +21,14 @@ npm run build && npm run test:e2e  # browser tests on the demo study
 ```
 
 `npm run gate` runs all of these in order and stops at the first failure.
+
+**Colours.** The app is light by default with the scan area kept black.
+`app/light.css` is generated from the dark stylesheets by
+`scripts/light-theme.mjs`: change colours in the source CSS, then run
+`npm run theme`. Hand corrections go in `app/light-fixes.css`. Anything that
+shows image content (the scan, the intro video) carries the `mri-stage` class
+and keeps the dark look. The Node tests fail if `app/light.css` is stale, and a
+browser test checks the contrast of every visible text.
 Lesson content has its own guide:
 [docs/learning-mode/AUTHORING.md](docs/learning-mode/AUTHORING.md). Never mark
 lesson content `reviewed` on someone else's behalf without their written

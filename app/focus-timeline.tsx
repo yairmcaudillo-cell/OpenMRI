@@ -772,7 +772,7 @@ export default function FocusTimeline({
                 : registration?.stage || 'Choose two series'}
             </span>
           </div>
-          <div className={`timeline-stage mode-${mode}`}>
+          <div className={`timeline-stage mri-stage mode-${mode}`}>
             <article className="timeline-card fixed-card">
               <div className="timeline-card-label">
                 <b>A</b> {displayDate(fixed?.date || '')}{' '}
