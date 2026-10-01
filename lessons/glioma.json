@@ -1,0 +1,187 @@
+{
+  "id": "glioma",
+  "kind": "sequence-compare",
+  "case": "glioma",
+  "order": 1,
+  "tracks": ["undergrad", "med"],
+  "title": {
+    "undergrad": "What a brain tumour looks like on MRI",
+    "med": "Glioma on MRI: enhancement, core and edema"
+  },
+  "summary": {
+    "undergrad": "This is a research scan of a person with a [[glioma]], a tumour that grows from the brain's own supporting cells. Pane A is T1 after a [[gadolinium]] injection (T1 +C); pane B is [[flair|FLAIR]]. The coloured outline was drawn by experts for the dataset: blue where the tumour takes up contrast, red for the tumour's inner part that does not, and yellow for the swollen tissue around it ([[edema]]). Use the switches to hide the outline and look at the image underneath, and turn the 3D view to see the tumour inside the brain.",
+    "med": "A research case from the Medical Segmentation Decathlon brain tumour set (BraTS-derived [[glioma]] data). Pane A is post-[[gadolinium]] T1 (T1 +C), pane B is [[flair|FLAIR]]. The expert labels mark three compartments: [[enhancement|enhancing]] tumour (blue), non-enhancing tumour core including [[necrosis]] (red), and peritumoral FLAIR hyperintensity, labelled [[edema]] (yellow). Study how each compartment looks on each sequence, then hide the labels and find the boundaries yourself. The text describes these appearances in general; it gives no diagnosis or grade for this person."
+  },
+  "referenceSeries": "03 T1 +C",
+  "compareSeries": "01 FLAIR",
+  "labelSeries": "05 Tumour labels (expert)",
+  "regions": [
+    {
+      "value": 1,
+      "name": "Edema",
+      "color": "#facc15",
+      "opacity": 0.35
+    },
+    {
+      "value": 2,
+      "name": "Non-enhancing tumour",
+      "color": "#ef4444"
+    },
+    {
+      "value": 3,
+      "name": "Enhancing tumour",
+      "color": "#3b82f6",
+      "opacity": 0.8
+    }
+  ],
+  "source": {
+    "text": "Medical Segmentation Decathlon, brain tumour case BRATS_449 (Simpson et al. 2019)",
+    "url": "https://medicaldecathlon.com",
+    "license": "CC BY-SA 4.0"
+  },
+  "review": {
+    "status": "draft"
+  },
+  "landmarks": [
+    {
+      "id": "enhancing-rim",
+      "name": "Enhancing rim",
+      "point": [164, 163, 89],
+      "region": 3,
+      "tracks": ["undergrad", "med"],
+      "toleranceMm": 5,
+      "review": {
+        "status": "draft"
+      },
+      "text": {
+        "undergrad": "The bright ring on T1 +C (A). The contrast agent normally stays inside blood vessels; here it leaks out into the tumour, so the tumour's living edge lights up.",
+        "med": "Thick, irregular [[enhancement]] on T1 +C (A): gadolinium crosses a disrupted blood–brain barrier in viable tumour. Note the ring shape around a non-enhancing centre."
+      }
+    },
+    {
+      "id": "core",
+      "name": "Non-enhancing centre",
+      "point": [145, 153, 89],
+      "region": 2,
+      "tracks": ["undergrad", "med"],
+      "toleranceMm": 5,
+      "review": {
+        "status": "draft"
+      },
+      "text": {
+        "undergrad": "Inside the ring the tumour stays dark on T1 +C (A). This part takes up no contrast; in tumours like this it often contains dead tissue.",
+        "med": "Central non-enhancing component, hypointense on T1 +C. In general, a non-enhancing centre within an enhancing ring often corresponds to [[necrosis]]; the label groups it with non-enhancing tumour."
+      }
+    },
+    {
+      "id": "edema",
+      "name": "Swelling around the tumour",
+      "point": [149, 120, 91],
+      "region": 1,
+      "tracks": ["undergrad", "med"],
+      "toleranceMm": 5,
+      "review": {
+        "status": "draft"
+      },
+      "text": {
+        "undergrad": "Bright on FLAIR (B) but not bright on T1 +C (A). This is extra water in the brain tissue around the tumour ([[edema]]).",
+        "med": "Peritumoral FLAIR hyperintensity (B) without enhancement (A), labelled edema. In general it is vasogenic edema and may also contain non-enhancing infiltrating tumour, which MRI cannot separate reliably."
+      }
+    },
+    {
+      "id": "ventricle",
+      "name": "Fluid in a ventricle, for comparison",
+      "point": [107, 112, 89],
+      "tracks": ["undergrad", "med"],
+      "toleranceMm": 5,
+      "review": {
+        "status": "draft"
+      },
+      "text": {
+        "undergrad": "Normal brain fluid (CSF): dark on both. Compare it with the tumour's centre and the swelling, which are not simply fluid.",
+        "med": "CSF in the lateral [[ventricle]]: hypointense on T1 +C and nulled on FLAIR. A space-occupying lesion can compress or displace nearby ventricles ([[mass-effect|mass effect]]); compare both sides of this slice."
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "find-rim",
+      "type": "find",
+      "tracks": ["undergrad", "med"],
+      "landmark": "enhancing-rim"
+    },
+    {
+      "id": "find-edema",
+      "type": "find",
+      "tracks": ["med"],
+      "landmark": "edema"
+    },
+    {
+      "id": "rim-why",
+      "type": "choice",
+      "tracks": ["undergrad", "med"],
+      "landmark": "enhancing-rim",
+      "review": {
+        "status": "draft"
+      },
+      "prompt": {
+        "undergrad": "The marker is on the bright ring in pane A (T1 after contrast). Why is the ring bright?",
+        "med": "The marker is on the enhancing rim. What does gadolinium enhancement in brain tissue indicate, in general?"
+      },
+      "options": [
+        "Contrast agent leaks out of damaged blood vessels into the tissue",
+        "The ring is made of fat",
+        "The ring is calcium"
+      ],
+      "answer": 0,
+      "explanation": {
+        "undergrad": "Healthy brain vessels keep the contrast agent in (the blood–brain barrier). Where a tumour damages them, it leaks out and the tissue turns bright.",
+        "med": "Enhancement reflects contrast leaving the vessels where the blood–brain barrier is disrupted, as in viable high-cellularity tumour; it is not specific to tumour."
+      }
+    },
+    {
+      "id": "edema-sequence",
+      "type": "choice",
+      "tracks": ["undergrad", "med"],
+      "landmark": "edema",
+      "review": {
+        "status": "draft"
+      },
+      "prompt": {
+        "undergrad": "The marker is in the swelling around the tumour. Which pane shows it as bright?",
+        "med": "Which sequence best shows the extent of the peritumoral signal change at the marker?"
+      },
+      "options": [
+        "Pane B, FLAIR",
+        "Pane A, T1 +C",
+        "Neither: it looks normal on both"
+      ],
+      "answer": 0,
+      "explanation": {
+        "undergrad": "Edema is extra water in the tissue. FLAIR shows water in tissue as bright while switching off the free fluid in the ventricles.",
+        "med": "FLAIR suppresses CSF but keeps T2 contrast, so increased tissue water (edema, infiltrative tumour) stands out; it does not enhance on T1 +C."
+      }
+    },
+    {
+      "id": "core-meaning",
+      "type": "choice",
+      "tracks": ["med"],
+      "landmark": "core",
+      "review": {
+        "status": "draft"
+      },
+      "prompt": {
+        "med": "The marker is in the centre of the ring. What does a non-enhancing centre inside an enhancing ring often correspond to, in general?"
+      },
+      "options": [
+        "Necrosis",
+        "Normal grey matter",
+        "Haemorrhage in every case"
+      ],
+      "answer": 0,
+      "explanation": {
+        "med": "A central non-enhancing area within a thick irregular enhancing rim commonly represents necrosis; the appearance alone is not diagnostic."
+      }
+    }
+  ]
+}

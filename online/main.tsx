@@ -42,6 +42,9 @@ function OnlineDemo() {
       studies={catalogue.studies.filter((s) => s.patient_id === patient.id)}
       patients={catalogue.patients}
       onPatient={setPatientId}
+      otherCases={catalogue.patients
+        .filter((p) => p.id !== patient.id)
+        .map((p) => ({ name: p.name, open: () => setPatientId(p.id) }))}
       onLibrary={none}
       onImport={none}
       onEdit={none}

@@ -16,7 +16,13 @@ export type Vec3 = [number, number, number];
 export const CASES = ['jane', 'glioma'] as const;
 export type CaseId = (typeof CASES)[number];
 /** An expert region of a label map, as the lesson names and colours it. */
-export type Region = { value: number; name: string; color: string };
+export type Region = {
+  value: number;
+  name: string;
+  color: string;
+  /** Opacity of the region's 3D model, 0.1 to 1 (default 1). */
+  opacity?: number;
+};
 /** Credit for third-party data, shown with the lesson. */
 export type Source = { text: string; url: string; license: string };
 /** Text written once per track. Every track the item belongs to needs text. */
@@ -207,6 +213,11 @@ export function validateLesson(input: unknown): string[] {
         if (!nonEmpty(r.name)) errors.push(`${where}: region needs a name`);
         if (typeof r.color !== 'string' || !/^#[0-9a-f]{6}$/i.test(r.color))
           errors.push(`${where}: region ${value} colour must be #rrggbb`);
+        if (
+          r.opacity !== undefined &&
+          !(typeof r.opacity === 'number' && r.opacity >= 0.1 && r.opacity <= 1)
+        )
+          errors.push(`${where}: region ${value} opacity must be 0.1 to 1`);
       }
   } else if (input.labelSeries !== undefined)
     errors.push(`${where}: labelSeries needs regions`);
@@ -377,9 +388,12 @@ export function validateCatalog(
       if (seen.has(l.id)) errors.push(`lesson ${l.id}: id used by two lessons`);
       seen.add(l.id);
     }
-  const orders = lessons.map((l) => (isObject(l) ? l.order : undefined));
+  // Each case lists its own lessons, so the order is unique per case.
+  const orders = lessons.map((l) =>
+    isObject(l) ? `${String(l.case)}:${String(l.order)}` : undefined,
+  );
   if (new Set(orders).size !== orders.length)
-    errors.push('Two lessons have the same order');
+    errors.push('Two lessons of one case have the same order');
   if (errors.length) return errors;
   const terms = new Set((glossary as GlossaryEntry[]).map((g) => g.id));
   for (const lesson of lessons as Lesson[])
@@ -430,6 +444,36 @@ export function resolveSeries(
       ?.id ?? ''
   );
 }
+
+/** What the viewer draws while a lesson with expert regions is open. */
+export type Overlay = {
+  /** The label-map series. */
+  seriesId: string;
+  regions: Region[];
+  /** Region values drawn on the slices. */
+  onSlices: number[];
+  /** Region values shown as 3D models. */
+  inModels: number[];
+};
+
+const channels = (color: string) =>
+  [0, 1, 2].map((i) => parseInt(color.slice(1 + 2 * i, 3 + 2 * i), 16));
+
+/** NiiVue label colours: shown regions in their colour, the rest transparent. */
+export function labelColormap(regions: Region[], shown: number[]) {
+  const sorted = [...regions].sort((a, b) => a.value - b.value);
+  const rgb = sorted.map((r) => channels(r.color));
+  return {
+    R: [0, ...rgb.map((c) => c[0])],
+    G: [0, ...rgb.map((c) => c[1])],
+    B: [0, ...rgb.map((c) => c[2])],
+    A: [0, ...sorted.map((r) => (shown.includes(r.value) ? 255 : 0))],
+    I: [0, ...sorted.map((r) => r.value)],
+  };
+}
+/** A region's 3D model colour as NiiVue's rgba255. */
+export const modelColor = (region: Region) =>
+  [...channels(region.color), 255] as [number, number, number, number];
 
 /** A find answer is right when the click lies within the landmark's tolerance. */
 export function findIsCorrect(click: number[] | null, landmark: Landmark) {

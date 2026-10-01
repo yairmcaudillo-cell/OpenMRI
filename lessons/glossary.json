@@ -3,156 +3,256 @@
     "id": "anterior",
     "term": "Anterior",
     "definition": "Towards the front of the head (the face).",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "posterior",
     "term": "Posterior",
     "definition": "Towards the back of the head.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "superior",
     "term": "Superior",
     "definition": "Towards the top of the head.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "inferior",
     "term": "Inferior",
     "definition": "Towards the neck and feet.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "medial",
     "term": "Medial",
     "definition": "Closer to the midline that divides left from right.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "lateral",
     "term": "Lateral",
     "definition": "Further from the midline, towards the side of the head.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "axial",
     "term": "Axial plane",
     "definition": "A horizontal slice, as if looking up from the feet.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "coronal",
     "term": "Coronal plane",
     "definition": "A vertical slice from ear to ear, as if looking at the face.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "sagittal",
     "term": "Sagittal plane",
     "definition": "A vertical slice from front to back, as if looking at the side of the head.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "radiological-convention",
     "term": "Radiological convention",
     "definition": "Images are shown as if facing the patient, so the patient's right side appears on the left of the screen.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "cortex",
     "term": "Cortex",
     "definition": "The thin outer layer of grey matter covering the cerebrum and cerebellum.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "grey-matter",
     "term": "Grey matter",
     "definition": "Brain tissue made mostly of nerve cell bodies, where information is processed.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "white-matter",
     "term": "White matter",
     "definition": "Brain tissue made mostly of myelinated nerve fibres that connect regions to each other.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "gyrus",
     "term": "Gyrus (plural gyri)",
     "definition": "A ridge on the surface of the brain.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "sulcus",
     "term": "Sulcus (plural sulci)",
     "definition": "A groove between two gyri.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "csf",
     "term": "Cerebrospinal fluid (CSF)",
     "definition": "Clear fluid that surrounds and cushions the brain and spinal cord and fills the ventricles.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "ventricle",
     "term": "Ventricle",
     "definition": "One of the connected fluid-filled spaces inside the brain.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "nucleus",
     "term": "Nucleus (in the brain)",
     "definition": "A cluster of nerve cell bodies deep in the brain that work together.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "brainstem",
     "term": "Brainstem",
     "definition": "The stalk connecting the brain to the spinal cord: midbrain, pons and medulla.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "basal-ganglia",
     "term": "Basal ganglia",
     "definition": "Deep grey matter nuclei, including the caudate and putamen, involved in starting and controlling movement.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "cranial-nerve",
     "term": "Cranial nerve",
     "definition": "One of twelve pairs of nerves that leave the brain directly, mostly from the brainstem.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "contralateral",
     "term": "Contralateral",
     "definition": "On the opposite side of the body.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "hemisphere",
     "term": "Hemisphere",
     "definition": "One half, left or right, of the cerebrum or cerebellum.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "t1",
     "term": "T1-weighted image",
     "definition": "An MRI contrast in which fat and white matter look bright and fluid looks dark. Good for anatomy.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "t2",
     "term": "T2-weighted image",
     "definition": "An MRI contrast in which fluid looks bright.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
   },
   {
     "id": "flair",
     "term": "FLAIR",
     "definition": "A T2-weighted image in which the signal from free fluid such as CSF is suppressed, so it looks dark.",
-    "review": { "status": "draft" }
+    "review": {
+      "status": "draft"
+    }
+  },
+  {
+    "id": "glioma",
+    "term": "Glioma",
+    "definition": "A tumour that grows from the glial cells, the supporting cells of the brain.",
+    "review": {
+      "status": "draft"
+    }
+  },
+  {
+    "id": "edema",
+    "term": "Edema",
+    "definition": "Extra water in tissue. Around a brain tumour it makes the tissue swell and look bright on T2 and FLAIR.",
+    "review": {
+      "status": "draft"
+    }
+  },
+  {
+    "id": "enhancement",
+    "term": "Enhancement",
+    "definition": "Tissue that becomes brighter on T1 after a contrast injection, because the contrast agent has leaked out of the blood vessels into it.",
+    "review": {
+      "status": "draft"
+    }
+  },
+  {
+    "id": "gadolinium",
+    "term": "Gadolinium contrast",
+    "definition": "A contrast agent injected into a vein before some MRI scans. It makes tissue bright on T1 where it leaves the blood vessels.",
+    "review": {
+      "status": "draft"
+    }
+  },
+  {
+    "id": "necrosis",
+    "term": "Necrosis",
+    "definition": "Dead tissue. In some tumours the centre dies because it outgrows its blood supply.",
+    "review": {
+      "status": "draft"
+    }
+  },
+  {
+    "id": "mass-effect",
+    "term": "Mass effect",
+    "definition": "When a growth or swelling pushes on and moves the brain around it, such as squeezing a ventricle or shifting the midline.",
+    "review": {
+      "status": "draft"
+    }
   }
 ]

@@ -119,3 +119,47 @@ test('a quiz runs, and a snapshot downloads instead of going to a server', async
   expect((await download).suggestedFilename()).toMatch(/^OpenMRI-.*\.png$/);
   await page.screenshot({ path: 'test-results/online-demo.png' });
 });
+
+test('the glioma case opens from the lesson list, with its outline and 3D models', async ({
+  page,
+}) => {
+  const { requests, cspErrors } = await open(page);
+  await panel(page)
+    .getByRole('button', { name: /Medical student/ })
+    .click();
+  await panel(page)
+    .getByRole('button', { name: /Glioma teaching case/ })
+    .click();
+  await expect(page.getByText('Study open')).toBeVisible({ timeout: 90_000 });
+  await panel(page)
+    .getByRole('button', { name: /Glioma on MRI/ })
+    .click();
+  const legend = panel(page).getByRole('region', { name: 'Expert outline' });
+  await expect(legend.getByRole('row')).toHaveCount(4);
+  await expect(panel(page).getByText(/CC BY-SA 4\.0/)).toBeVisible();
+  await panel(page).getByRole('button', { name: 'Enhancing rim' }).click();
+  await expect(page.getByRole('heading', { name: /03 T1 \+C/ })).toBeVisible({
+    timeout: 90_000,
+  });
+  await expect
+    .poll(() => requests.filter((u) => u.endsWith('.stl')).length, {
+      timeout: 90_000,
+    })
+    .toBe(3);
+  const download = legend.getByRole('link', {
+    name: 'Download the Edema 3D model (STL)',
+  });
+  const stl = await page.request.get((await download.getAttribute('href'))!);
+  expect(stl.ok()).toBe(true);
+  await expect(page.getByText('Study open')).toBeVisible({ timeout: 90_000 });
+  await page.screenshot({ path: 'test-results/online-glioma.png' });
+  expect(
+    requests.filter(
+      (u) =>
+        !u.startsWith(ORIGIN + '/') &&
+        !u.startsWith('blob:') &&
+        !u.startsWith('data:'),
+    ),
+  ).toEqual([]);
+  expect(cspErrors).toEqual([]);
+});

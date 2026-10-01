@@ -43,6 +43,12 @@ checks that `npm run demo` loads the demo study.
   scan in the repository, and it stays the only one. Nothing else from a real
   person goes into code, tests, fixtures, issues, screenshots, or commit
   messages. Tests generate synthetic DICOM and NIfTI data; keep it that way.
+  The one exception is the glioma teaching case: a public, openly licensed
+  research scan (CC BY-SA 4.0) that is **downloaded at build time** and
+  checked against fixed fingerprints, never committed
+  (`scripts/fetch_teaching_case.py`). Adding another case needs the
+  maintainer's decision, recorded like `docs/pathology/PLAN.md`, and an
+  attribution shown wherever the case appears.
 - **OpenMRI is a viewer.** Do not add features that detect, measure, or
   diagnose, and do not present registration or intensity values as a clinical
   result. The README's limitations section states what the app does not claim.

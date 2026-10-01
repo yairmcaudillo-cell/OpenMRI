@@ -127,6 +127,14 @@
   color: #999;
   margin-top: 4px;
 }
+.lesson-list h3 {
+  margin: 18px 0 4px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #999;
+}
 .lesson-list svg {
   margin-left: auto;
   flex: none;
@@ -286,6 +294,73 @@
   accent-color: #8052ff;
   width: 15px;
   height: 15px;
+}
+/* Expert regions */
+.region-legend {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+}
+.region-legend h3 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #ddd;
+}
+.region-legend p {
+  margin: 4px 0 8px;
+  font-size: 11px;
+  color: #aaa;
+}
+.region-legend table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.region-legend th,
+.region-legend td {
+  padding: 4px 2px;
+  text-align: center;
+  color: #ccc;
+}
+.region-legend thead th {
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: #aaa;
+}
+.region-legend tbody th {
+  text-align: left;
+  font-weight: 500;
+}
+.region-legend input {
+  accent-color: #8052ff;
+  width: 15px;
+  height: 15px;
+}
+.region-legend a {
+  display: inline-flex;
+  padding: 4px;
+  color: #ccc;
+}
+.region-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 8px;
+  border-radius: 2px;
+  vertical-align: -1px;
+}
+.source-credit {
+  margin: 10px 0 0;
+  font-size: 11px;
+  color: #aaa;
+}
+.source-credit a {
+  color: #ccc;
+  text-decoration: underline;
 }
 /* Quiz */
 .lesson-mode {

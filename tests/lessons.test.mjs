@@ -203,6 +203,13 @@ test('the catalogue catches unknown glossary terms and duplicate lessons', () =>
     L.validateCatalog([lesson(), { ...lesson(), id: 'other' }], glossary),
     /same order/,
   );
+  assert.deepEqual(
+    L.validateCatalog(
+      [lesson(), { ...lesson(), id: 'other', case: 'glioma' }],
+      glossary,
+    ),
+    [],
+  );
   expectError(
     L.validateCatalog([lesson()], [...glossary, ...glossary]),
     /id used twice/,
@@ -349,6 +356,7 @@ test('lessons with expert regions are validated', () => {
     [(l) => (l.regions[1].value = 1), /region value 1 is used twice/],
     [(l) => (l.regions[0].color = 'yellow'), /colour must be #rrggbb/],
     [(l) => (l.regions[0].name = ''), /region needs a name/],
+    [(l) => (l.regions[0].opacity = 0), /region 1 opacity must be 0.1 to 1/],
     [
       (l) => (l.landmarks[0].region = 2),
       /region 2 is not one of the lesson's regions/,
@@ -373,4 +381,15 @@ test('each case sees only its own lessons', () => {
     L.lessonsFor(both, 'med', 'glioma').map((l) => l.id),
     ['glioma'],
   );
+});
+
+test('label colours show only the chosen regions', () => {
+  const { regions } = pathology();
+  const cm = L.labelColormap([...regions].reverse(), [3]);
+  assert.deepEqual(cm.I, [0, 1, 3]);
+  assert.deepEqual(cm.R, [0, 0xfa, 0x3b]);
+  assert.deepEqual(cm.G, [0, 0xcc, 0x82]);
+  assert.deepEqual(cm.B, [0, 0x15, 0xf6]);
+  assert.deepEqual(cm.A, [0, 0, 255]);
+  assert.deepEqual(L.modelColor(regions[1]), [0x3b, 0x82, 0xf6, 255]);
 });

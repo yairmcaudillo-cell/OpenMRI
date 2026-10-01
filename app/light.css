@@ -1389,6 +1389,10 @@ html[data-theme='light'] .lesson-order:not(.mri-stage):not(.mri-stage *) {
   color: #696969;
 }
 /* app/learn/learn.css */
+html[data-theme='light'] .lesson-list h3:not(.mri-stage):not(.mri-stage *) {
+  color: #696969;
+}
+/* app/learn/learn.css */
 html[data-theme='light'] .back-link:not(.mri-stage):not(.mri-stage *) {
   color: #6933ff;
 }
@@ -1460,6 +1464,39 @@ html[data-theme='light'] .glossary-tip strong:not(.mri-stage):not(.mri-stage *) 
 }
 /* app/learn/learn.css */
 html[data-theme='light'] .definitions-toggle:not(.mri-stage):not(.mri-stage *) {
+  color: #3b3b3b;
+}
+/* app/learn/learn.css */
+html[data-theme='light'] .region-legend:not(.mri-stage):not(.mri-stage *) {
+  border: 1px solid #e6e6e6;
+}
+/* app/learn/learn.css */
+html[data-theme='light'] .region-legend h3:not(.mri-stage):not(.mri-stage *) {
+  color: #2b2b2b;
+}
+/* app/learn/learn.css */
+html[data-theme='light'] .region-legend p:not(.mri-stage):not(.mri-stage *) {
+  color: #595959;
+}
+/* app/learn/learn.css */
+html[data-theme='light'] .region-legend th:not(.mri-stage):not(.mri-stage *),
+html[data-theme='light'] .region-legend td:not(.mri-stage):not(.mri-stage *) {
+  color: #3b3b3b;
+}
+/* app/learn/learn.css */
+html[data-theme='light'] .region-legend thead th:not(.mri-stage):not(.mri-stage *) {
+  color: #595959;
+}
+/* app/learn/learn.css */
+html[data-theme='light'] .region-legend a:not(.mri-stage):not(.mri-stage *) {
+  color: #3b3b3b;
+}
+/* app/learn/learn.css */
+html[data-theme='light'] .source-credit:not(.mri-stage):not(.mri-stage *) {
+  color: #595959;
+}
+/* app/learn/learn.css */
+html[data-theme='light'] .source-credit a:not(.mri-stage):not(.mri-stage *) {
   color: #3b3b3b;
 }
 /* app/learn/learn.css */

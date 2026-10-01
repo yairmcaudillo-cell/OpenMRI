@@ -113,3 +113,53 @@ fetches, packs and imports the case; the online build imports both cases and
 ships their meshes. Errors caught: a hashing tie in study order made a test
 depend on insertion order (now first by date plus the set), and a JSON rewrite
 of the lessons broke their formatting (`npm run format`).
+
+### CP-T4 · Outline and 3D models in the viewer · 2026-10-01
+
+While a lesson with `regions` is open, the panel reports an overlay (label
+series, regions, which regions show on the slices and in 3D). The viewer adds
+the label map to the slices with a label colour table (hidden regions get
+alpha 0) and loads one STL per region into the 3D view, with NiiVue's mesh
+X-ray so the models stay visible inside the volume. Series loads remove the
+overlay volume, so it is re-added after each load; the models are kept. The
+legend has per-region switches for slices and 3D, an STL download per region
+and the source credit. The online demo gained **More teaching cases** in the
+lesson list (its controls are hidden while learning mode is open).
+
+Browser tests (local and online): legend, credit, STL file well formed, blue
+(enhancing tumour) pixels appear on the slices and in 3D, disappear when
+switched off, and the outline goes when the lesson closes; online, every
+request stays on the site.
+
+Errors caught by the loop:
+
+- The first 3D check looked at the 3D canvas while the lesson's compare mode
+  hides it; the test now switches to Volume + slices, as a learner would.
+- Seen through the translucent edema, the models are a muted blue; a fixed
+  threshold was replaced by "drops to a third when switched off".
+- "Enhancing tumour" also matched "Non-enhancing tumour" (strict mode); exact
+  names.
+- `order` was unique across all lessons, so the glioma lesson could not be
+  number 1 of its case; now unique per case, with a test.
+
+### CP-T5 · Lesson content (draft) · 2026-10-01
+
+`lessons/glioma.json`, both tracks: enhancing rim, non-enhancing centre,
+edema and a ventricle for comparison, each placed from the label map
+(deepest or brightest voxels of the region) and checked on rendered FLAIR and
+T1 +C slices with the outlines drawn. `check_lessons.py` now checks each
+case's own series and that a landmark naming a region lies in it (a test
+moves one point into the ventricle and relabels another: both reported).
+Six glossary terms added. The text is general; it does not name the side.
+All items are drafts for the reviewer.
+
+### CP-T6 · Attribution, docs, gate · 2026-10-01
+
+Credit and license appear in the lesson (under the legend), the archive's
+`ATTRIBUTION.txt`, the README, SECURITY, CONTRIBUTING (the one-real-scan rule
+now names this downloaded exception), AGENTS and the online and learning-mode
+docs. CI and the Pages workflow cache the downloaded case. Online data is
+80 MB (budget 200 MB). Full gate green: 19 local and 4 online browser tests.
+
+Open for the reviewer: confirm the case's left–right orientation and check
+all draft text, landmarks and questions.
