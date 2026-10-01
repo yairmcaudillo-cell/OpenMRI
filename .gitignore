@@ -69,3 +69,6 @@ __pycache__/
 # online demo build (docs/online/PLAN.md)
 /online/public/
 /dist-online/
+
+# downloaded teaching cases (docs/pathology/PLAN.md)
+/.cache/

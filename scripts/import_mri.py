@@ -5,6 +5,7 @@ import nibabel as nib
 import numpy as np
 import pydicom
 from nibabel.processing import resample_from_to
+from meshes import label_mesh, write_stl
 
 
 def date(value):
@@ -24,6 +25,17 @@ def digest(p):
         for b in iter(lambda:f.read(1024*1024),b''): h.update(b)
     return h.hexdigest()
 
+LABEL_NAME=re.compile(r'label|segmentation|mask',re.I)
+
+def label_values(data, description):
+    """Region values of a label map, or None. Needs a label name and a few whole numbers."""
+    if not LABEL_NAME.search(description or ''):return None
+    sample=data.ravel()[::max(1,data.size//2000000)]
+    if not np.all(np.isfinite(sample)) or np.any(sample!=np.round(sample)) or np.any(sample<0):return None
+    values=np.unique(np.asarray(data)).astype(int)
+    values=[int(v) for v in values if v>0]
+    return values if 0<len(values)<=32 else None
+
 def prepare_volume(source, output, series_id, label, meta=None):
     meta=meta or {}
     original=nib.load(str(source))
@@ -32,16 +44,19 @@ def prepare_volume(source, output, series_id, label, meta=None):
     if np.prod(original.shape)>512**3*2: raise ValueError('The volume is too large')
     native_shape=list(original.shape); native_spacing=list(map(float,original.header.get_zooms()[:3]))
     img=nib.as_closest_canonical(original)
+    regions=label_values(np.asarray(img.dataobj),meta.get('description',label))
     # Preserve voxel-center geometry and physical field of view on downsampling.
     target=np.minimum(np.array(img.shape),320)
     if np.any(target != img.shape):
         ratio=(np.array(img.shape)-1)/(target-1)
         affine=img.affine.copy(); affine[:3,:3]=affine[:3,:3] @ np.diag(ratio)
-        img=resample_from_to(img,(tuple(target),affine),order=1)
+        # A label map keeps whole values: nearest neighbour, never interpolation.
+        img=resample_from_to(img,(tuple(target),affine),order=0 if regions else 1)
     data=np.nan_to_num(img.get_fdata(dtype=np.float32),copy=False)
     sample=data.ravel()[::max(1,data.size//500000)]
     positive=sample[sample>0]
     lo,hi=np.percentile(positive if positive.size>100 else sample,[.5,99.5])
+    if regions:lo,hi=0.0,float(max(regions))  # show region values as they are
     if hi<=lo:hi=lo+1
     clean=nib.Nifti1Image(data,img.affine)
     clean.header['cal_min']=lo;clean.header['cal_max']=hi
@@ -57,7 +72,20 @@ def prepare_volume(source, output, series_id, label, meta=None):
       'nativeVoxelMm':native_spacing,'dimensions':list(clean.shape),
       'voxelMm':list(map(float,clean.header.get_zooms()[:3])), 'axisCodes':list(nib.aff2axcodes(clean.affine)),
       'affineRASmm':clean.affine.tolist(),'displayRange':[float(lo),float(hi)],
-      'url':f'/api/library/assets/{series_id}','volumeBytes':output.stat().st_size,'sha256':digest(output)}
+      'url':f'/api/library/assets/{series_id}','volumeBytes':output.stat().st_size,'sha256':digest(output),
+      **(label_meshes(data,clean.affine,regions,output,series_id) if regions else {})}
+
+def label_meshes(data, affine, regions, output, series_id):
+    """One STL surface per region of a label map, next to the volume."""
+    meshes=[];assets=[]
+    for v in regions:
+        vertices,faces=label_mesh(data==v,affine)
+        if not len(faces):continue
+        mesh_id=f'{series_id}-label{v}'
+        path=output.with_name(f'{mesh_id}.stl');write_stl(path,vertices,faces)
+        meshes.append({'value':v,'url':f'/api/library/assets/{mesh_id}','triangles':int(len(faces))})
+        assets.append((mesh_id,path,digest(path),path.stat().st_size))
+    return {'labelMap':{'values':regions},'meshes':meshes,'_meshAssets':assets}
 
 
 def main(root,job_id,action):
@@ -152,6 +180,7 @@ def main(root,job_id,action):
                     label=g['description']+(f' · {k+1}' if len(outputs)>1 else '')
                     s=prepare_volume(p,dest,asset_id,label,{**g,'count':len(g.get('files',[])) or None})
                     if not s['sourceImageCount']:s['sourceImageCount']=s['nativeDimensions'][2]
+                    for mesh_id,path,sha,size in s.pop('_meshAssets',[]):assets.append((mesh_id,str(path.relative_to(root)),sha,size))
                     st=studies.setdefault(g['studyUid'],{'date':g['date'],'bodyPart':g['bodyPart'],'modality':g['modality'],'series':[]})
                     st['series'].append(s);assets.append((asset_id,str(dest.relative_to(root)),s['sha256'],s['volumeBytes']))
             except (ValueError,OSError,subprocess.TimeoutExpired,nib.filebasedimages.ImageFileError) as e:warnings.append(f"{g['description']}: {e}")
