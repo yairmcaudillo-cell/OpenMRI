@@ -17,7 +17,14 @@ npm run dev     # http://127.0.0.1:4173
 npm run format       # oxfmt
 npm run check        # lint, typecheck, Node tests
 npm run test:import  # Python tests: ZIP import, dcm2niix conversion, registration
+npm run build && npm run test:e2e  # browser tests on the demo study
 ```
+
+`npm run gate` runs all of these in order and stops at the first failure.
+Lesson content has its own guide:
+[docs/learning-mode/AUTHORING.md](docs/learning-mode/AUTHORING.md). Never mark
+lesson content `reviewed` on someone else's behalf without their written
+approval.
 
 CI runs the same commands on Linux with Node 22 and Python 3.12 and 3.14, and
 checks that `npm run demo` loads the demo study.

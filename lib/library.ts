@@ -92,6 +92,18 @@ function removeLegacyStudies(d: DatabaseSync) {
     console.warn('Could not clean up retired studies:', error);
   }
 }
+/** SHA-256 of demo/jane-head-mri.zip. Learning mode recognises the demo by it, never by name. */
+export const DEMO_ARCHIVE_SHA256 =
+  '247b778cc557f6b474ed154cc56841cb8faaad05bf9d5456bee7f2c0cc213124';
+/** Studies for the library listing, newest first, each with a `demo` flag. */
+export function catalogStudies() {
+  return db()
+    .prepare(
+      'SELECT id,patient_id,date,label,body_part,created_at,source_hash=? AS demo FROM studies ORDER BY date DESC',
+    )
+    .all(DEMO_ARCHIVE_SHA256)
+    .map((row) => ({ ...row, demo: row.demo === 1 }));
+}
 export function localMutation(request: Request) {
   const url = new URL(request.url);
   const origin = request.headers.get('origin');

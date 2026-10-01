@@ -1,0 +1,279 @@
+{
+  "id": "deep-structures",
+  "kind": "landmarks",
+  "order": 2,
+  "tracks": ["undergrad", "med"],
+  "title": {
+    "undergrad": "Inside the brain: ventricles and deep structures",
+    "med": "Ventricles, commissures and deep grey matter"
+  },
+  "summary": {
+    "undergrad": "Follow the fluid-filled [[ventricle|ventricles]] and find the structures around them. On this [[t1|T1]] scan fluid looks dark. Points on one side of the brain are placed on the patient's right. The viewer uses the [[radiological-convention]], so the patient's right appears on the left of the screen.",
+    "med": "Trace the ventricular system and the deep grey nuclei and white matter around it. Points on one side of the brain are placed on the patient's right. The viewer uses the [[radiological-convention]], so the patient's right appears on the left of the screen."
+  },
+  "referenceSeries": "02 Axial MPRAGE",
+  "review": {
+    "status": "draft"
+  },
+  "landmarks": [
+    {
+      "id": "lateral-ventricle",
+      "name": "Lateral ventricle, frontal horn (right)",
+      "point": [11, 10, 2],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "The two lateral ventricles are the largest fluid spaces in the brain. They are filled with [[csf|CSF]], which is dark on this scan.",
+        "med": "Frontal horn of the right lateral ventricle, bounded laterally by the head of the caudate and medially by the septum pellucidum. [[csf|CSF]] is produced mainly by choroid plexus."
+      },
+      "toleranceMm": 6,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "third-ventricle",
+      "name": "Third ventricle",
+      "point": [1, -12, -2],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "A thin, fluid-filled slit in the midline, between the two halves of the thalamus.",
+        "med": "Midline slit between the thalami, connected to the lateral ventricles through the foramina of Monro and to the fourth ventricle through the cerebral aqueduct."
+      },
+      "toleranceMm": 4,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fourth-ventricle",
+      "name": "Fourth ventricle",
+      "point": [1, -36, -29],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "A small fluid space between the brainstem in front and the cerebellum behind.",
+        "med": "Lies between the pons and upper medulla anteriorly and the cerebellum posteriorly; drains [[csf|CSF]] into the subarachnoid space through the foramina of Luschka and Magendie."
+      },
+      "toleranceMm": 4,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "corpus-callosum-genu",
+      "name": "Corpus callosum (genu)",
+      "point": [1, 25, 5],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "The corpus callosum is a thick bridge of [[white-matter]] that connects the left and right halves of the brain. This is its front bend.",
+        "med": "Genu of the corpus callosum, the anterior bend, carrying fibres between the frontal lobes (forceps minor)."
+      },
+      "toleranceMm": 4,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "corpus-callosum-splenium",
+      "name": "Corpus callosum (splenium)",
+      "point": [1, -33, 7],
+      "tracks": ["med"],
+      "text": {
+        "med": "Splenium, the thick posterior end of the corpus callosum, carrying fibres between the occipital and parietal lobes (forceps major)."
+      },
+      "toleranceMm": 4,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "thalamus",
+      "name": "Thalamus (right)",
+      "point": [12, -18, -3],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "A pair of egg-shaped [[grey-matter]] structures in the centre of the brain. They relay sensory signals to the [[cortex]].",
+        "med": "Paired diencephalic [[nucleus|nuclei]] relaying sensory and motor information to the cortex (e.g. VPL/VPM for somatosensation, LGN for vision). The posterior limb of the internal capsule lies lateral to it."
+      },
+      "toleranceMm": 6,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "caudate-head",
+      "name": "Caudate nucleus, head (right)",
+      "point": [17, 10, 4],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "Part of the [[basal-ganglia]], a group of deep structures that help start and control movement. It bulges into the side of the lateral ventricle.",
+        "med": "Head of the caudate, forming the lateral wall of the frontal horn. Part of the striatum with the putamen; atrophy of the caudate head is a feature of Huntington disease."
+      },
+      "toleranceMm": 6,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "putamen",
+      "name": "Putamen (right)",
+      "point": [25, 2, 0],
+      "tracks": ["med"],
+      "text": {
+        "med": "Lateral part of the lentiform nucleus, separated from the caudate and thalamus by the internal capsule. With the caudate it forms the striatum."
+      },
+      "toleranceMm": 6,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "internal-capsule",
+      "name": "Internal capsule, posterior limb (right)",
+      "point": [20, -8, 2],
+      "tracks": ["med"],
+      "text": {
+        "med": "Posterior limb, between the thalamus and the lentiform nucleus. Carries corticospinal and thalamocortical sensory fibres; a small lacunar infarct here can cause a [[contralateral]] pure motor stroke."
+      },
+      "toleranceMm": 4,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "hippocampus",
+      "name": "Hippocampus (right)",
+      "point": [28, -22, -18],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "A curved structure deep in the temporal lobe, named after its seahorse shape. It is essential for forming new memories.",
+        "med": "Medial temporal structure below the temporal horn of the lateral ventricle. Central to episodic memory; bilateral damage causes anterograde amnesia, and it is often affected early in Alzheimer disease."
+      },
+      "toleranceMm": 6,
+      "review": {
+        "status": "draft"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "find-lateral-ventricle",
+      "type": "find",
+      "tracks": ["undergrad", "med"],
+      "landmark": "lateral-ventricle"
+    },
+    {
+      "id": "find-third-ventricle",
+      "type": "find",
+      "tracks": ["undergrad", "med"],
+      "landmark": "third-ventricle"
+    },
+    {
+      "id": "find-fourth-ventricle",
+      "type": "find",
+      "tracks": ["undergrad", "med"],
+      "landmark": "fourth-ventricle"
+    },
+    {
+      "id": "find-corpus-callosum-genu",
+      "type": "find",
+      "tracks": ["undergrad", "med"],
+      "landmark": "corpus-callosum-genu"
+    },
+    {
+      "id": "find-thalamus",
+      "type": "find",
+      "tracks": ["undergrad", "med"],
+      "landmark": "thalamus"
+    },
+    {
+      "id": "find-caudate-head",
+      "type": "find",
+      "tracks": ["undergrad", "med"],
+      "landmark": "caudate-head"
+    },
+    {
+      "id": "find-hippocampus",
+      "type": "find",
+      "tracks": ["undergrad", "med"],
+      "landmark": "hippocampus"
+    },
+    {
+      "id": "find-corpus-callosum-splenium",
+      "type": "find",
+      "tracks": ["med"],
+      "landmark": "corpus-callosum-splenium"
+    },
+    {
+      "id": "find-putamen",
+      "type": "find",
+      "tracks": ["med"],
+      "landmark": "putamen"
+    },
+    {
+      "id": "find-internal-capsule",
+      "type": "find",
+      "tracks": ["med"],
+      "landmark": "internal-capsule"
+    },
+    {
+      "id": "csf-on-t1",
+      "type": "choice",
+      "tracks": ["undergrad", "med"],
+      "prompt": {
+        "undergrad": "On this T1 scan, why do the ventricles look dark?",
+        "med": "On this T1 scan, why do the ventricles look dark?"
+      },
+      "options": [
+        "They are filled with fluid, which is dark on T1",
+        "They contain no tissue at all, so no signal",
+        "They are full of fat"
+      ],
+      "answer": 0,
+      "landmark": "lateral-ventricle",
+      "explanation": {
+        "undergrad": "The ventricles contain [[csf|CSF]]. Fluid is dark on [[t1|T1]] images and bright on [[t2|T2]] images.",
+        "med": "The ventricles contain [[csf|CSF]]. Fluid is dark on [[t1|T1]] images and bright on [[t2|T2]] images."
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "memory-structure",
+      "type": "choice",
+      "tracks": ["undergrad", "med"],
+      "prompt": {
+        "undergrad": "Which structure at the marker is most important for forming new memories?",
+        "med": "Which structure is at the marker?"
+      },
+      "options": ["Hippocampus", "Putamen", "Thalamus", "Caudate nucleus"],
+      "answer": 0,
+      "landmark": "hippocampus",
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "capsule-deficit",
+      "type": "choice",
+      "tracks": ["med"],
+      "prompt": {
+        "med": "A small infarct at the marker would most likely cause which deficit?"
+      },
+      "options": [
+        "Contralateral pure motor weakness",
+        "Ipsilateral ataxia",
+        "Expressive aphasia",
+        "Bitemporal hemianopia"
+      ],
+      "answer": 0,
+      "landmark": "internal-capsule",
+      "explanation": {
+        "med": "The posterior limb of the internal capsule carries corticospinal fibres; lacunar infarcts here classically cause contralateral pure motor weakness."
+      },
+      "review": {
+        "status": "draft"
+      }
+    }
+  ]
+}

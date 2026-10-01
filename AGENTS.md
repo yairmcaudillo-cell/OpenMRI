@@ -18,7 +18,7 @@ When someone asks you to install, run, or open OpenMRI, do exactly this.
 2. Clone and start with the demo study:
 
    ```sh
-   git clone https://github.com/lev1nson/OpenMRI.git
+   git clone https://github.com/yairmcaudillo-cell/OpenMRI.git
    cd OpenMRI
    npm run demo
    ```
@@ -57,6 +57,9 @@ If something fails, read `.openmri-server.log` or run
 
 - Keep the server on `127.0.0.1`. It has no login. Never bind it to
   `0.0.0.0`, never tunnel it (ngrok, Cloudflare, SSH), never deploy it.
+- The only thing ever published online is the static demo build
+  (`npm run build:online`, `docs/online/README.md`): no server, no import, only
+  the demo study. Never add import, uploads, or API calls to it.
 - The data directory `.openmri/` holds medical images and personal details.
   Never commit it, upload it, paste its contents, or send it anywhere. Do not
   open the user's scans or read patient details unless they ask you to.
@@ -70,9 +73,13 @@ npm run dev          # dev server on 127.0.0.1:4173
 npm run format       # oxfmt
 npm run check        # lint, typecheck, Node tests
 npm run test:import  # Python tests, including the demo import
+npm run gate         # all checks, the build and the browser tests, in order
 ```
 
-Run all three checks before you finish. The README describes the project
+Run all three checks before you finish; `npm run gate` runs them and more.
+Learning-mode lessons are JSON in `lessons/` (see
+`docs/learning-mode/AUTHORING.md`). Never set a lesson item's review status to
+`reviewed`: only the human reviewer does that. The README describes the project
 layout; `CONTRIBUTING.md` has the rules for changes. OpenMRI is a viewer: it
 must not detect, measure, or diagnose. The demo study is the only real
 scan allowed in the repository.

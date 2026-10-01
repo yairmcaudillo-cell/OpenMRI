@@ -3,6 +3,7 @@ import '@fontsource-variable/inter';
 import './globals.css';
 import './workspace.css';
 import './focus-timeline.css';
+import './learn/learn.css';
 export const metadata: Metadata = {
   title: 'OpenMRI — local MRI viewer',
   description:

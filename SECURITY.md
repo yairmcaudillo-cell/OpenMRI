@@ -4,6 +4,13 @@ OpenMRI is a single-user desktop application. The server binds to
 `127.0.0.1` only, has no authentication, and must not be exposed to a network.
 Do not put it behind a reverse proxy, a tunnel, or a port forward.
 
+## Online demo
+
+The online demo (`docs/online/README.md`) is a separate static build, not this
+server. It contains only the demo study and the lessons, has no import and no
+server code, and its Content Security Policy allows connections only to its
+own site. Report problems with it the same way as with the app.
+
 ## Medical data
 
 Everything you import stays in your data directory (`.openmri/` by default).

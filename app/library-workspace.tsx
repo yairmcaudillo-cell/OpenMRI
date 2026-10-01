@@ -35,6 +35,8 @@ export type StudyRecord = {
   label: string;
   body_part: string;
   created_at: string;
+  /** The study came from the shipped demo archive; learning mode is offered. */
+  demo?: boolean;
 };
 type Catalog = {
   patients: Patient[];

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # One-line installer for OpenMRI on macOS and Linux:
 #
-#   curl -fsSL https://raw.githubusercontent.com/lev1nson/OpenMRI/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/yairmcaudillo-cell/OpenMRI/main/install.sh | bash
 #
 # Installs what is missing (through Homebrew on macOS), puts the app in
 # ~/OpenMRI, starts the local server, loads the demo study and opens it in the
@@ -11,7 +11,7 @@
 # OPENMRI_DIR changes the install folder, OPENMRI_REPO the Git source.
 set -euo pipefail
 
-REPO="${OPENMRI_REPO:-https://github.com/lev1nson/OpenMRI.git}"
+REPO="${OPENMRI_REPO:-https://github.com/yairmcaudillo-cell/OpenMRI.git}"
 DIR="${OPENMRI_DIR:-$HOME/OpenMRI}"
 NODE_MIN='22.13.0'
 PYTHONS=(python3.12 python3.13 python3.14)

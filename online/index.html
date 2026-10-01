@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Static demo: the page may load only its own files; nothing is sent anywhere. -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' blob: data:; worker-src 'self' blob:; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'"
+    />
+    <title>OpenMRI learning mode — online demo</title>
+    <meta
+      name="description"
+      content="Learn neuroanatomy on a real 3D head MRI in your browser: landmarks, glossary and quizzes for undergraduate and medical students."
+    />
+    <link rel="icon" href="./favicon.svg" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>This demo needs JavaScript and WebGL 2.</noscript>
+    <script type="module" src="./main.tsx"></script>
+  </body>
+</html>

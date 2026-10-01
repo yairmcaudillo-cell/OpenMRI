@@ -6,11 +6,11 @@
   "author": "Maksim Khuzin",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lev1nson/OpenMRI.git"
+    "url": "git+https://github.com/yairmcaudillo-cell/OpenMRI.git"
   },
-  "homepage": "https://github.com/lev1nson/OpenMRI#readme",
+  "homepage": "https://github.com/yairmcaudillo-cell/OpenMRI#readme",
   "bugs": {
-    "url": "https://github.com/lev1nson/OpenMRI/issues"
+    "url": "https://github.com/yairmcaudillo-cell/OpenMRI/issues"
   },
   "keywords": [
     "mri",
@@ -34,14 +34,20 @@
     "down": "bash scripts/server.sh stop",
     "status": "bash scripts/server.sh status",
     "demo": "bash scripts/server.sh start --no-open && node scripts/demo.mjs",
-    "lint": "oxlint app lib vite.config.ts",
+    "lint": "oxlint app lib online vite.config.ts vite.online.config.ts",
     "format": "oxfmt",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/*.test.mjs",
     "setup": "node scripts/setup.mjs",
     "test:import": ".venv/bin/python -m unittest discover -s tests -p \"test_*.py\"",
-    "check": "npm run lint && npm run typecheck && npm test",
-    "format:check": "oxfmt --check"
+    "check": "npm run lint && npm run typecheck && npm test && npm run lessons:check",
+    "format:check": "oxfmt --check",
+    "gate": "bash scripts/gate.sh",
+    "test:e2e": "playwright test",
+    "lessons:check": "node --experimental-strip-types --no-warnings scripts/check-lessons.mjs",
+    "build:online": ".venv/bin/python scripts/build_online_data.py online/public/data && cp public/favicon.svg online/public/ && vite build --config vite.online.config.ts",
+    "preview:online": "vite preview --config vite.online.config.ts",
+    "test:online": "playwright test --config playwright.online.config.ts"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",
@@ -59,6 +65,7 @@
     "vinext": "1.0.0-beta.5"
   },
   "devDependencies": {
+    "@playwright/test": "1.56.1",
     "@tailwindcss/postcss": "4.2.1",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",

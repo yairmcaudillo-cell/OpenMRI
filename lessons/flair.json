@@ -1,0 +1,88 @@
+{
+  "id": "flair",
+  "kind": "sequence-compare",
+  "order": 5,
+  "tracks": ["undergrad", "med"],
+  "title": {
+    "undergrad": "Why FLAIR hides the fluid",
+    "med": "FLAIR: T2 with the water nulled"
+  },
+  "summary": {
+    "undergrad": "[[flair|FLAIR]] (pane B) is a T2 image with one change: the signal from free fluid is switched off, so the ventricles turn dark while the brain tissue keeps its T2 look. Pane A is the main view and pane B the second one; the cursor is linked, so both always show the same spot.",
+    "med": "FLAIR adds an inversion pulse timed to null free water, so CSF is dark while the remaining contrast stays T2-weighted. Tissue with increased water content therefore stays bright next to dark CSF, which makes FLAIR sensitive to periventricular and cortical changes. Pane A is the main view and pane B the second one; the cursor is linked, so both always show the same spot."
+  },
+  "referenceSeries": "03 Axial T2",
+  "compareSeries": "04 Axial T2 FLAIR",
+  "review": {
+    "status": "draft"
+  },
+  "landmarks": [
+    {
+      "id": "csf",
+      "name": "Fluid in a ventricle (CSF)",
+      "point": [11, 10, 2],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "Bright on T2 (A), dark on FLAIR (B). That is the whole trick of FLAIR.",
+        "med": "CSF: hyperintense on T2, nulled (hypointense) on FLAIR by the inversion time."
+      },
+      "toleranceMm": 5,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "white-matter",
+      "name": "White matter",
+      "point": [27, 18, 16],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "Brain tissue looks similar on both, because FLAIR keeps the T2 contrast of tissue.",
+        "med": "Normal white matter is mildly hypointense to cortex on both T2 and FLAIR."
+      },
+      "toleranceMm": 5,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "vitreous",
+      "name": "Fluid inside the eye",
+      "point": [32, 55, -37],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "The fluid inside the eye is free water too, so it is also darkened on FLAIR.",
+        "med": "Vitreous is free water and is largely suppressed on FLAIR, like CSF."
+      },
+      "toleranceMm": 5,
+      "review": {
+        "status": "draft"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "flair-csf",
+      "type": "choice",
+      "tracks": ["undergrad", "med"],
+      "prompt": {
+        "undergrad": "The marker is in a ventricle. Why is it dark in pane B?",
+        "med": "The marker is in a ventricle. Why is it dark in pane B?"
+      },
+      "options": [
+        "FLAIR switches off the signal from free fluid",
+        "The ventricle is empty on this scan",
+        "FLAIR is a T1 image"
+      ],
+      "answer": 0,
+      "landmark": "csf",
+      "explanation": {
+        "undergrad": "[[flair|FLAIR]] is T2-weighted with free water nulled, so CSF turns dark.",
+        "med": "[[flair|FLAIR]] is T2-weighted with free water nulled, so CSF turns dark."
+      },
+      "review": {
+        "status": "draft"
+      }
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "id": "t1-and-t2",
+  "kind": "sequence-compare",
+  "order": 4,
+  "tracks": ["undergrad", "med"],
+  "title": {
+    "undergrad": "How MRI contrast works: T1 and T2",
+    "med": "T1 versus T2 weighting"
+  },
+  "summary": {
+    "undergrad": "The same head, scanned two ways. On the [[t1|T1]] image in pane A, fluid is dark and [[white-matter|white matter]] is bright. On the [[t2|T2]] image in pane B, fluid is bright. Pane A is the main view and pane B the second one; the cursor is linked, so both always show the same spot.",
+    "med": "Compare CSF, white matter and vitreous on a 3D T1 MPRAGE (A) and an axial T2 turbo spin echo (B). T1 weighting reflects longitudinal relaxation: fat and myelinated white matter have short T1 and look bright. T2 weighting reflects transverse relaxation: free water has a long T2 and looks bright. Pane A is the main view and pane B the second one; the cursor is linked, so both always show the same spot."
+  },
+  "referenceSeries": "02 Axial MPRAGE",
+  "compareSeries": "03 Axial T2",
+  "review": {
+    "status": "draft"
+  },
+  "landmarks": [
+    {
+      "id": "csf",
+      "name": "Fluid in a ventricle (CSF)",
+      "point": [11, 10, 2],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "Dark on T1, bright on T2. A quick rule: on T2, water is white.",
+        "med": "CSF: long T1 and long T2, so hypointense on T1 and hyperintense on T2."
+      },
+      "toleranceMm": 5,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "white-matter",
+      "name": "White matter",
+      "point": [27, 18, 16],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "Bright on T1 and darker grey on T2. Its fatty myelin insulation is what makes it bright on T1.",
+        "med": "Myelinated white matter: shorter T1 and T2 than grey matter, so brighter than cortex on T1 and darker than cortex on T2."
+      },
+      "toleranceMm": 5,
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "vitreous",
+      "name": "Fluid inside the eye",
+      "point": [32, 55, -37],
+      "tracks": ["undergrad", "med"],
+      "text": {
+        "undergrad": "The fluid-filled eye behaves like the ventricles: dark on T1, bright on T2.",
+        "med": "Vitreous humour is mostly free water: hypointense on T1, hyperintense on T2, like CSF."
+      },
+      "toleranceMm": 5,
+      "review": {
+        "status": "draft"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "fluid-on-t2",
+      "type": "choice",
+      "tracks": ["undergrad", "med"],
+      "prompt": {
+        "undergrad": "Look at the marker in pane B. How does fluid look on a T2 image?",
+        "med": "Look at the marker in pane B. How does fluid look on a T2 image?"
+      },
+      "options": ["Bright", "Dark", "The same grey as white matter"],
+      "answer": 0,
+      "landmark": "csf",
+      "explanation": {
+        "undergrad": "Free water is bright on [[t2|T2]] and dark on [[t1|T1]].",
+        "med": "Free water is bright on [[t2|T2]] and dark on [[t1|T1]]."
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "white-matter-on-t1",
+      "type": "choice",
+      "tracks": ["undergrad", "med"],
+      "prompt": {
+        "undergrad": "The marker is in white matter. On the T1 image in pane A, is white matter brighter or darker than the cortex?",
+        "med": "The marker is in white matter. On the T1 image in pane A, is white matter brighter or darker than the cortex?"
+      },
+      "options": ["Brighter", "Darker"],
+      "answer": 0,
+      "landmark": "white-matter",
+      "explanation": {
+        "undergrad": "Myelin makes white matter brighter than grey matter on [[t1|T1]].",
+        "med": "Myelin makes white matter brighter than grey matter on [[t1|T1]]."
+      },
+      "review": {
+        "status": "draft"
+      }
+    }
+  ]
+}

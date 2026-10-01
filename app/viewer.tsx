@@ -6,10 +6,12 @@ import type { FocusController } from './focus-controller';
 import type { SlicePlanesController } from './slice-planes-controller';
 import ComparePane from './compare-pane';
 import StudyOverview from './study-overview';
+import LearnPanel from './learn/learn-panel';
 import FocusTimeline from './focus-timeline';
 import type { Vec3 } from '@/lib/focus-timeline';
 import type { Patient, StudyRecord } from './library-workspace';
 import { displayDate } from '@/lib/dates';
+import { ONLINE, studyUrl, volumeUrl } from '@/lib/online';
 
 import {
   Orbit,
@@ -35,6 +37,7 @@ import {
   FolderOpen,
   Upload,
   UserRound,
+  GraduationCap,
 } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
@@ -95,9 +98,7 @@ const sliceNames = ['Axial', 'Coronal', 'Sagittal'];
 function rangeValue(value: number | readonly number[]) {
   return Array.isArray(value) ? value[0] : (value as number);
 }
-function assetUrl(url: string) {
-  return url.startsWith('/api/') ? url : `/api/${url.replace(/^\//, '')}`;
-}
+const assetUrl = volumeUrl;
 function measure(values: number[] | undefined) {
   return values?.map((v) => Number(v.toFixed(2))).join(' × ') ?? '—';
 }
@@ -113,6 +114,7 @@ export default function Viewer({
   onEdit,
   onHome,
   initialStudy,
+  initialLearn = false,
 }: {
   patient: Patient;
   studies: StudyRecord[];
@@ -124,8 +126,14 @@ export default function Viewer({
   onHome: () => void;
   /** Study to open first; defaults to the first study of the patient. */
   initialStudy?: string;
+  /** Opens learning mode on arrival (the online demo). */
+  initialLearn?: boolean;
 }) {
   const [overviewOpen, setOverviewOpen] = useState(false);
+  const [learnOpen, setLearnOpen] = useState(initialLearn);
+  // Clicks and scrolls on the slices. The quiz counts only these as answers;
+  // the focus also moves on resize and after loads.
+  const [sliceInput, setSliceInput] = useState(0);
   const [timelineOpen, setTimelineOpen] = useState(false);
 
   const [studyKey, setStudyKey] = useState(
@@ -145,6 +153,10 @@ export default function Viewer({
     comparisonCanvas.current = canvas;
     setComparisonReady(!!canvas);
   }, []);
+  // Learning mode is offered on the shipped demo study only (lib/library.ts).
+  const isDemo = studies.find((s) => s.id === studyKey)?.demo === true;
+  const learning = learnOpen && isDemo;
+  const panelOpen = overviewOpen || learning;
   const studyDate = displayDate(
     studies.find((s) => s.id === studyKey)?.date || '',
   );
@@ -191,7 +203,7 @@ export default function Viewer({
 
   useEffect(() => {
     let active = true;
-    fetch(`/api/library/studies/${encodeURIComponent(studyKey)}`)
+    fetch(studyUrl(studyKey))
       .then((r) => {
         if (!r.ok) throw new Error('Study not found in the local library.');
         return r.json() as Promise<Manifest>;
@@ -456,7 +468,7 @@ export default function Viewer({
       80,
     );
     return () => clearTimeout(timer);
-  }, [mode, ready, immersive, compact, overviewOpen]);
+  }, [mode, ready, immersive, compact, panelOpen]);
 
   useEffect(() => {
     const controller = planesRef.current;
@@ -570,6 +582,23 @@ export default function Viewer({
     } else if (loading) pendingBookmark.current = saved;
     else focusRef.current?.moveTo(saved.frac as [number, number, number]);
   }
+  /**
+   * Moves the focus to a physical point, on another series if needed. With a
+   * second series, shows both side by side with the linked cursor.
+   */
+  function showPoint(seriesId: string, mm: Vec3, compareWith?: string) {
+    setRotate(false);
+    if (compareWith) {
+      setCompareId(compareWith);
+      setMode('compare');
+    } else if (mode !== 'both' && mode !== 'slices') setMode('both');
+    if (seriesId !== selectedId) {
+      // The series load re-centres on the carried world point (see above).
+      worldPoint.current = mm;
+      setSelectedId(seriesId);
+    } else if (loading) worldPoint.current = mm;
+    else focusRef.current?.moveToWorld(mm);
+  }
   function savePoint() {
     if (!point) return;
     setBookmark({ ...point, studyId: studyKey });
@@ -668,6 +697,16 @@ export default function Viewer({
         out.toBlob(resolve, 'image/png'),
       );
       if (!blob) throw new Error('PNG encoding failed');
+      if (ONLINE) {
+        // No server online: the snapshot goes to the visitor's downloads.
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `OpenMRI-${seriesName(study).replace(/[^\w+-]+/g, '-')}.png`;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(link.href), 10_000);
+        setToast('PNG downloaded');
+        return;
+      }
       const response = await fetch('/api/captures', {
         method: 'POST',
         headers: { 'Content-Type': 'image/png' },
@@ -697,17 +736,26 @@ export default function Viewer({
         />
       )}
       <header className="topbar">
-        <button
-          className="brand"
-          onClick={onHome}
-          aria-label="Back to the welcome screen"
-          title="Welcome screen"
-        >
-          <Orbit strokeWidth={1.25} />
-          <span>
-            OPENMRI<small>LOCAL MRI VIEWER</small>
-          </span>
-        </button>
+        {ONLINE ? (
+          <div className="brand">
+            <Orbit strokeWidth={1.25} />
+            <span>
+              OPENMRI<small>ONLINE DEMO</small>
+            </span>
+          </div>
+        ) : (
+          <button
+            className="brand"
+            onClick={onHome}
+            aria-label="Back to the welcome screen"
+            title="Welcome screen"
+          >
+            <Orbit strokeWidth={1.25} />
+            <span>
+              OPENMRI<small>LOCAL MRI VIEWER</small>
+            </span>
+          </button>
+        )}
         <div className="study-header">
           <span className="status-dot" />
           Study viewer
@@ -715,40 +763,61 @@ export default function Viewer({
           <time>{studyDate}</time>
         </div>
         <div className="header-actions">
-          <button
-            className="header-toggle"
-            disabled={studies.length < 2}
-            title={
-              studies.length < 2
-                ? 'Import a second study date to compare over time'
-                : undefined
-            }
-            onClick={() => {
-              setRotate(false);
-              setTimelineOpen(true);
-            }}
-          >
-            <Crosshair size={17} /> Focus over time
-          </button>
-          <button className="export-button library-button" onClick={onLibrary}>
-            <FolderOpen size={17} />
-            <span>Library</span>
-          </button>
-          <button className="primary-action" onClick={onImport}>
-            <Upload size={16} />
-            <span>Import MRI</span>
-          </button>
+          {!ONLINE && (
+            <>
+              <button
+                className="header-toggle"
+                disabled={studies.length < 2}
+                title={
+                  studies.length < 2
+                    ? 'Import a second study date to compare over time'
+                    : undefined
+                }
+                onClick={() => {
+                  setRotate(false);
+                  setTimelineOpen(true);
+                }}
+              >
+                <Crosshair size={17} /> Focus over time
+              </button>
+              <button
+                className="export-button library-button"
+                onClick={onLibrary}
+              >
+                <FolderOpen size={17} />
+                <span>Library</span>
+              </button>
+              <button className="primary-action" onClick={onImport}>
+                <Upload size={16} />
+                <span>Import MRI</span>
+              </button>
+            </>
+          )}
+          {isDemo && (
+            <button
+              className={`header-toggle ${learning ? 'active' : ''}`}
+              aria-pressed={learning}
+              onClick={() => {
+                setOverviewOpen(false);
+                setLearnOpen(!learning);
+              }}
+            >
+              <GraduationCap size={17} /> Learn
+            </button>
+          )}
           <button
             className={`header-toggle ${overviewOpen ? 'active' : ''}`}
             aria-pressed={overviewOpen}
             onClick={() => {
+              setLearnOpen(false);
               setOverviewOpen(!overviewOpen);
             }}
           >
             <CalendarDays size={17} /> History
           </button>
           <span className="local">
-            <ShieldCheck size={15} /> Runs locally
+            <ShieldCheck size={15} />{' '}
+            {ONLINE ? 'Runs in your browser' : 'Runs locally'}
           </span>
           <Dialog>
             <DialogTrigger
@@ -797,7 +866,7 @@ export default function Viewer({
           </Dialog>
         </div>
       </header>
-      <div className={`workspace ${overviewOpen ? 'panel-open' : ''}`}>
+      <div className={`workspace ${panelOpen ? 'panel-open' : ''}`}>
         {overviewOpen && (
           <StudyOverview
             patient={patient}
@@ -809,16 +878,36 @@ export default function Viewer({
             onClose={() => setOverviewOpen(false)}
           />
         )}
-        <aside className="controls" hidden={overviewOpen}>
+        {learning && (
+          <LearnPanel
+            series={manifest?.series ?? []}
+            point={hasFocus && point ? point.mm : null}
+            sliceInput={sliceInput}
+            loading={loading}
+            onShow={showPoint}
+            onSeries={(id, compareWith) => {
+              if (id !== selectedId) setSelectedId(id);
+              // Quizzes are answered on the slices, so they must be visible.
+              if (compareWith) {
+                setCompareId(compareWith);
+                setMode('compare');
+              } else if (mode !== 'both' && mode !== 'slices') setMode('both');
+            }}
+            onClose={() => setLearnOpen(false)}
+          />
+        )}
+        <aside className="controls" hidden={panelOpen}>
           <div className="control-heading">
             <span className="eyebrow">PATIENT</span>
-            <button
-              className="icon-button"
-              aria-label="Edit patient details"
-              onClick={onEdit}
-            >
-              <UserRound size={16} />
-            </button>
+            {!ONLINE && (
+              <button
+                className="icon-button"
+                aria-label="Edit patient details"
+                onClick={onEdit}
+              >
+                <UserRound size={16} />
+              </button>
+            )}
           </div>
           <select
             className="patient-select"
@@ -1213,6 +1302,13 @@ export default function Viewer({
               <canvas
                 ref={sliceCanvas}
                 aria-label="Three MRI slices. Click to pick a point, scroll to move the slice."
+                onPointerUp={(e) => {
+                  // Primary clicks only: other buttons adjust or pan the view.
+                  if (e.button === 0 && !loading) setSliceInput((n) => n + 1);
+                }}
+                onWheelCapture={() => {
+                  if (!loading) setSliceInput((n) => n + 1);
+                }}
               />
               {sliceNames.map((name, i) => (
                 <div className={`slice-overlay slice-${i}`} key={name}>

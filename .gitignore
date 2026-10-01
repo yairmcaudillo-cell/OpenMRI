@@ -60,3 +60,12 @@ __pycache__/
 *.nii.gz
 *.zip
 !/demo/jane-head-mri.zip
+
+# browser tests
+/.e2e-data/
+/test-results/
+/playwright-report/
+
+# online demo build (docs/online/PLAN.md)
+/online/public/
+/dist-online/

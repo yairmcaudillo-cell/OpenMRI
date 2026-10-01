@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/lev1nson/OpenMRI/actions/workflows/ci.yml"><img src="https://github.com/lev1nson/OpenMRI/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+  <a href="https://github.com/yairmcaudillo-cell/OpenMRI/actions/workflows/ci.yml"><img src="https://github.com/yairmcaudillo-cell/OpenMRI/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-8052ff" alt="License: MIT"></a>
   <img src="https://img.shields.io/badge/node-%E2%89%A5%2022.13-5fa04e" alt="Node.js 22.13 or newer">
   <img src="https://img.shields.io/badge/python-3.12%E2%80%933.14-3776ab" alt="Python 3.12 to 3.14">
@@ -34,8 +34,30 @@
 | **Focus over time**     | Mark a region on one date; other dates of the same head MRI are rigidly registered to it. Compare side by side, with a wipe, or by blinking between A and B. |
 | **Welcome screen**      | Your five most recent studies one click away, next to the import wizard. Opening a study plays a short transition while the volume loads.                    |
 | **Snapshots**           | PNG snapshots of the current view, saved into your data directory.                                                                                           |
+| **Learning mode**       | Neuroanatomy and MRI lessons on the demo study, with an undergraduate and a medical-student track, a glossary and quizzes. See below.                        |
 
 OpenMRI is a visualization tool. It does not detect, measure, or diagnose anything.
+
+## Learning mode
+
+On the demo study, **Learn** opens lessons for students: pick the
+undergraduate or the medical-student track, click a landmark and the three
+slices and the 3D marker move to it, read definitions of terms in place, and
+test yourself with find-it and multiple-choice quizzes. Two lessons compare
+T1, T2 and FLAIR side by side. All content is a **draft until a medical
+reviewer checks it**, and the app marks it so.
+
+**Try it online:** https://yairmcaudillo-cell.github.io/OpenMRI/ runs learning
+mode on the demo study in the browser, with nothing to install and no way to
+upload scans ([docs/online/README.md](docs/online/README.md)).
+
+[docs/learning-mode/README.md](docs/learning-mode/README.md) has the guide
+and screenshots; [AUTHORING.md](docs/learning-mode/AUTHORING.md) explains
+how to write and review lessons. Learning mode was added in this fork by Yair
+([@yairmcaudillo-cell](https://github.com/yairmcaudillo-cell)); OpenMRI itself
+is by Maksim Khuzin
+([lev1nson/OpenMRI](https://github.com/lev1nson/OpenMRI)). The install
+commands below use this fork, which includes learning mode.
 
 ## Requirements
 
@@ -59,7 +81,7 @@ Paste this into Claude Code, Codex, Cursor, or any agent that can run commands
 on your computer:
 
 ```text
-Clone https://github.com/lev1nson/OpenMRI, follow its AGENTS.md to install
+Clone https://github.com/yairmcaudillo-cell/OpenMRI, follow its AGENTS.md to install
 and start it with the demo study, and open it in my browser.
 ```
 
@@ -70,7 +92,7 @@ and start it with the demo study, and open it in my browser.
 On macOS or Linux:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/lev1nson/OpenMRI/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/yairmcaudillo-cell/OpenMRI/main/install.sh | bash
 ```
 
 On macOS the script installs missing Node.js, Python, and Git with Homebrew,
@@ -80,7 +102,7 @@ first. The app goes into `~/OpenMRI`. Run the same command again to update.
 ### By hand
 
 ```sh
-git clone https://github.com/lev1nson/OpenMRI.git
+git clone https://github.com/yairmcaudillo-cell/OpenMRI.git
 cd OpenMRI
 npm run demo    # install, build, start in the background, load the demo, open the browser
 ```
@@ -154,7 +176,10 @@ npm run typecheck    # tsc
 npm test             # Node tests: focus controller, slice planes, timeline service, contracts
 npm run test:import  # Python tests: ZIP import, real dcm2niix conversion, registration
 npm run format       # oxfmt
-npm run check        # lint, typecheck and the Node tests together
+npm run check        # lint, typecheck, the Node tests and lessons:check together
+npm run lessons:check  # learning-mode lessons: structure, text per track, review rules
+npm run test:e2e     # browser tests on the demo study (after npm run build)
+npm run gate         # everything above plus the build, stopping at the first failure
 ```
 
 The Python tests generate synthetic DICOM and NIfTI data. One of them imports the
@@ -172,6 +197,7 @@ app/                      served by vinext, Next.js style
   slice-planes-controller.ts  slice planes drawn inside the 3D volume
   compare-pane.tsx          second series with a linked cursor
   focus-timeline.tsx        registration and comparison across dates
+  learn/                    learning mode: panel, quiz, glossary tooltips, styles
   timeline-volume.tsx       NiiVue instance used by the timeline
   api/                      local HTTP API: library, imports, assets, timeline, captures
 lib/
@@ -181,17 +207,23 @@ lib/
   recent.ts                 ordering of the recent-studies list
   dates.ts                  date formatting
   analysis-contract.ts      adapter interface for a future local analysis model
+  lessons.ts                lesson types, validator, track filters, quiz scoring
+  lesson-catalog.ts         bundles every lesson in lessons/ at build time
+lessons/                  learning-mode lessons and glossary (JSON), schema.md
 scripts/
   setup.mjs                 creates the Python environment
   demo.mjs                  loads the demo study through the local API
   server.sh                 start, stop, restart, status, logs for the local server
   import_mri.py             ZIP inspection and DICOM/NIfTI conversion worker
   register_mri.py           rigid registration worker, SimpleITK
-tests/                    Node and Python tests
+  check-lessons.mjs         lessons:check
+  check_lessons.py          checks landmarks lie inside the head on the demo scan
+  gate.sh                   runs every check in order (npm run gate)
+tests/                    Node and Python tests; tests/e2e/ browser tests (Playwright)
 demo/                     demo study (Jane) as an importable ZIP
 install.sh                one-line installer for macOS and Linux
 AGENTS.md                 setup steps and rules for AI coding agents
-docs/                     user guide and the registration feature description
+docs/                     user guide, registration feature, learning mode (docs/learning-mode/)
 public/welcome/           welcome background and intro clip (generated illustrations)
 components/ui/            the few shadcn and base-ui primitives the app uses
 ```

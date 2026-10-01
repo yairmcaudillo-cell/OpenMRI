@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { LoaderCircle, RotateCcw } from 'lucide-react';
 import type { Niivue } from '@niivue/niivue';
 import type { FocusController } from './focus-controller';
+import { volumeUrl } from '@/lib/online';
 
 type CompareSeries = {
   id: string;
@@ -67,9 +68,7 @@ export default function ComparePane({
       );
       await nv.loadVolumes([
         {
-          url: series.url.startsWith('/api/')
-            ? series.url
-            : `/api/${series.url}`,
+          url: volumeUrl(series.url),
           name: `${series.id}.nii.gz`,
           colormap: 'gray',
           cal_min: series.displayRange[0],
