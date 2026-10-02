@@ -59,7 +59,8 @@ If something fails, read `.openmri-server.log` or run
   `0.0.0.0`, never tunnel it (ngrok, Cloudflare, SSH), never deploy it.
 - The only thing ever published online is the static demo build
   (`npm run build:online`, `docs/online/README.md`): no server, no import, only
-  the demo study. Never add import, uploads, or API calls to it.
+  the teaching cases (the demo study and the public glioma case). Never add
+  import, uploads, or API calls to it.
 - The data directory `.openmri/` holds medical images and personal details.
   Never commit it, upload it, paste its contents, or send it anywhere. Do not
   open the user's scans or read patient details unless they ask you to.
@@ -82,4 +83,6 @@ Learning-mode lessons are JSON in `lessons/` (see
 `reviewed`: only the human reviewer does that. The README describes the project
 layout; `CONTRIBUTING.md` has the rules for changes. OpenMRI is a viewer: it
 must not detect, measure, or diagnose. The demo study is the only real
-scan allowed in the repository.
+scan allowed in the repository. The glioma teaching case
+(`npm run demo:pathology`) is a public CC BY-SA 4.0 research scan downloaded
+at build time and never committed; keep its attribution wherever it is shown.

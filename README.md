@@ -25,16 +25,16 @@
 
 ## What it does
 
-|                         |                                                                                                                                                              |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **3D volume rendering** | Three palettes, a movable cut plane, and the slice planes drawn inside the volume.                                                                           |
-| **Three linked slices** | Click a slice to place a focus marker that stays visible through the volume. Scroll to move through the stack.                                               |
-| **Compare two series**  | Two series of one study side by side, with cursors linked in physical millimetres.                                                                           |
-| **Patient library**     | Several patients and study dates in a local SQLite catalogue, with a cache of prepared NIfTI volumes.                                                        |
-| **Focus over time**     | Mark a region on one date; other dates of the same head MRI are rigidly registered to it. Compare side by side, with a wipe, or by blinking between A and B. |
-| **Welcome screen**      | Your five most recent studies one click away, next to the import wizard. Opening a study plays a short transition while the volume loads.                    |
-| **Snapshots**           | PNG snapshots of the current view, saved into your data directory.                                                                                           |
-| **Learning mode**       | Neuroanatomy and MRI lessons on the demo study, with an undergraduate and a medical-student track, a glossary and quizzes. See below.                        |
+|                         |                                                                                                                                                                |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **3D volume rendering** | Three palettes, a movable cut plane, and the slice planes drawn inside the volume.                                                                             |
+| **Three linked slices** | Click a slice to place a focus marker that stays visible through the volume. Scroll to move through the stack.                                                 |
+| **Compare two series**  | Two series of one study side by side, with cursors linked in physical millimetres.                                                                             |
+| **Patient library**     | Several patients and study dates in a local SQLite catalogue, with a cache of prepared NIfTI volumes.                                                          |
+| **Focus over time**     | Mark a region on one date; other dates of the same head MRI are rigidly registered to it. Compare side by side, with a wipe, or by blinking between A and B.   |
+| **Welcome screen**      | Your five most recent studies one click away, next to the import wizard. Opening a study plays a short transition while the volume loads.                      |
+| **Snapshots**           | PNG snapshots of the current view, saved into your data directory.                                                                                             |
+| **Learning mode**       | Neuroanatomy and MRI lessons on the demo study, and a brain tumour lesson with the experts' outline on the slices and as 3D models, for two tracks. See below. |
 
 OpenMRI is a visualization tool. It does not detect, measure, or diagnose anything.
 
@@ -47,8 +47,17 @@ test yourself with find-it and multiple-choice quizzes. Two lessons compare
 T1, T2 and FLAIR side by side. All content is a **draft until a medical
 reviewer checks it**, and the app marks it so.
 
+A second teaching case shows a **brain tumour (glioma)**: one public research
+scan from the Medical Segmentation Decathlon (CC BY-SA 4.0), downloaded when
+you set it up and never stored in this repository. Its lesson draws the
+experts' outline of the enhancing tumour, the non-enhancing core and the
+surrounding edema on the slices, shows each region as a 3D model inside the
+brain, and lets you download the models as STL files for 3D printing. The
+outlines are the dataset's own; OpenMRI only displays them. Load it with
+`npm run demo:pathology` (about 7 MB download, once).
+
 **Try it online:** https://yairmcaudillo-cell.github.io/OpenMRI/ runs learning
-mode on the demo study in the browser, with nothing to install and no way to
+mode on both teaching cases in the browser, with nothing to install and no way to
 upload scans ([docs/online/README.md](docs/online/README.md)).
 
 [docs/learning-mode/README.md](docs/learning-mode/README.md) has the guide
@@ -132,6 +141,24 @@ about 45 MB. `npm run demo` loads it as patient Jane. To load it by hand, click
 left in on purpose, so the 3D view shows a whole head.
 [demo/README.md](demo/README.md) describes the series and how they were
 prepared.
+
+## The glioma teaching case
+
+`npm run demo:pathology` downloads two files of one case (BRATS_449) from the
+official Medical Segmentation Decathlon archive by byte range, checks them
+against SHA-256 fingerprints in `scripts/fetch_teaching_case.py`, splits the
+image into FLAIR, T1, T1 +C and T2, and imports them with the expert label map
+as patient **Glioma teaching case**. The download is cached in `.cache/`, which
+git ignores. Source: Simpson et al., "A large annotated medical image dataset
+for the development and evaluation of segmentation algorithms" (2019),
+https://medicaldecathlon.com, licensed CC BY-SA 4.0; the prepared data and 3D
+models carry the same license. [docs/pathology/PLAN.md](docs/pathology/PLAN.md)
+records how the case was chosen and checked.
+
+A NIfTI file whose name contains `label`, `segmentation` or `mask` and that
+holds a few whole numbers is imported as a label map: OpenMRI keeps its values
+exact and builds one 3D surface (STL) per value. This works for any label map
+you import, for example one exported from 3D Slicer.
 
 ## Importing your scans
 

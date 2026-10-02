@@ -1,6 +1,7 @@
 {
   "id": "deep-structures",
   "kind": "landmarks",
+  "case": "jane",
   "order": 2,
   "tracks": ["undergrad", "med"],
   "title": {

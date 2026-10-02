@@ -4,6 +4,8 @@ import './globals.css';
 import './workspace.css';
 import './focus-timeline.css';
 import './learn/learn.css';
+import './light.css';
+import './light-fixes.css';
 export const metadata: Metadata = {
   title: 'OpenMRI — local MRI viewer',
   description:
@@ -15,7 +17,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" data-theme="light">
       <body>{children}</body>
     </html>
   );

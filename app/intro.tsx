@@ -92,7 +92,7 @@ export default function Intro({
   }
 
   return (
-    <div className={`intro ${leaving ? 'leaving' : ''}`}>
+    <div className={`intro mri-stage ${leaving ? 'leaving' : ''}`}>
       {/* oxlint-disable-next-line jsx-a11y/media-has-caption -- decorative clip without speech, hidden from assistive tech */}
       <video
         ref={video}

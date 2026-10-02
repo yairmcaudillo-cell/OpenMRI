@@ -32,6 +32,11 @@ jobs:
         with:
           python-version: '3.12'
       - run: npm ci
+      # The glioma teaching case is fetched once by byte range and then cached.
+      - uses: actions/cache@v5
+        with:
+          path: .cache/teaching-cases
+          key: teaching-cases-${{ hashFiles('scripts/fetch_teaching_case.py') }}
       - run: npm run setup
         env:
           OPENMRI_SETUP_PYTHON: python3.12

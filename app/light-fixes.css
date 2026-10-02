@@ -1,0 +1,26 @@
+/* Hand-written corrections to the generated light theme (app/light.css). */
+
+/* Welcome: the hero illustration has a black background. Fading it into a
+   white page turns grey, so in the light theme it sits in its own black
+   panel on the right, like the scan area in the viewer. */
+html[data-theme='light'] .welcome-backdrop {
+  inset: 24px 24px 24px 48%;
+  border-radius: 18px;
+  background: #000 url('/welcome/hero.jpg') right center / cover no-repeat;
+  box-shadow: 0 18px 50px #0002;
+}
+html[data-theme='light'] .welcome-backdrop::after {
+  background: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0) 22%);
+  border-radius: inherit;
+}
+@media (max-width: 760px) {
+  html[data-theme='light'] .welcome-backdrop {
+    inset: 16px 16px auto;
+    height: 38vh;
+    background-position: center 30%;
+    background-size: cover;
+  }
+  html[data-theme='light'] .welcome-backdrop::after {
+    background: none;
+  }
+}

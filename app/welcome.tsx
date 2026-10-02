@@ -1,4 +1,5 @@
 'use client';
+import ThemeToggle from './theme-toggle';
 import {
   ArrowUpRight,
   FolderOpen,
@@ -33,11 +34,12 @@ export default function Welcome({
   const returning = !loading && studies.length > 0;
   return (
     <main className="welcome">
-      <div className="welcome-backdrop" aria-hidden="true" />
+      <div className="welcome-backdrop mri-stage" aria-hidden="true" />
       <header className="welcome-brand">
         <Orbit strokeWidth={1.25} />
         <span>OPENMRI</span>
         <small>LOCAL MRI VIEWER</small>
+        <ThemeToggle />
       </header>
       <section className="welcome-content">
         <span className="eyebrow">

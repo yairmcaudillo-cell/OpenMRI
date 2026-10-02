@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { lightColor } from '../scripts/light-theme.mjs';
 
 // WCAG 2.2 contrast for learning mode. Each pair is foreground on background
 // as used in app/learn/learn.css; text needs 4.5:1, focus rings and control
@@ -79,5 +80,17 @@ test('focus rings and state borders meet 3:1', () => {
       `${name}: ${fg} on ${bg} is not in learn.css`,
     );
     assert.ok(ratio(fg, bg) >= 3, `${name}: ${ratio(fg, bg).toFixed(2)}:1`);
+  }
+});
+
+test('the same pairs meet 4.5:1 in the light theme (app/light.css)', () => {
+  for (const [name, fg, bg] of text) {
+    // Text on an accent surface keeps its colour; dark surfaces turn light.
+    const lightBg = lightColor(bg, 'bg');
+    const lightFg = lightBg === bg && bg !== panel ? fg : lightColor(fg, 'fg');
+    assert.ok(
+      ratio(lightFg, lightBg) >= 4.5,
+      `${name}: ${lightFg} on ${lightBg} is ${ratio(lightFg, lightBg).toFixed(2)}:1`,
+    );
   }
 });

@@ -5,7 +5,8 @@ import { defineConfig } from '@playwright/test';
 // Run `npm run build:online` first; `npm run gate` does that.
 export default defineConfig({
   testDir: 'tests/e2e-online',
-  timeout: 120_000,
+  // Software WebGL on shared CI runners: one series switch can take ~45 s.
+  timeout: 180_000,
   workers: 1,
   retries: 0,
   reporter: [['list']],

@@ -7,11 +7,13 @@ import type { SlicePlanesController } from './slice-planes-controller';
 import ComparePane from './compare-pane';
 import StudyOverview from './study-overview';
 import LearnPanel from './learn/learn-panel';
+import ThemeToggle from './theme-toggle';
 import FocusTimeline from './focus-timeline';
 import type { Vec3 } from '@/lib/focus-timeline';
 import type { Patient, StudyRecord } from './library-workspace';
 import { displayDate } from '@/lib/dates';
-import { ONLINE, studyUrl, volumeUrl } from '@/lib/online';
+import { ONLINE, meshUrl, studyUrl, volumeUrl } from '@/lib/online';
+import { labelColormap, modelColor, type Overlay } from '@/lib/lessons';
 
 import {
   Orbit,
@@ -67,6 +69,10 @@ type Series = {
   voxelMm: number[];
   url: string;
   displayRange: number[];
+  /** Set on label maps: the region values present. */
+  labelMap?: { values: number[] };
+  /** One 3D model (STL) per region of a label map. */
+  meshes?: { value: number; url: string; triangles: number }[];
 };
 type Manifest = {
   defaultSeriesId: string;
@@ -115,6 +121,7 @@ export default function Viewer({
   onHome,
   initialStudy,
   initialLearn = false,
+  otherCases = [],
 }: {
   patient: Patient;
   studies: StudyRecord[];
@@ -128,12 +135,17 @@ export default function Viewer({
   initialStudy?: string;
   /** Opens learning mode on arrival (the online demo). */
   initialLearn?: boolean;
+  /** Other teaching cases learning mode can switch to (the online demo). */
+  otherCases?: { name: string; open: () => void }[];
 }) {
   const [overviewOpen, setOverviewOpen] = useState(false);
   const [learnOpen, setLearnOpen] = useState(initialLearn);
   // Clicks and scrolls on the slices. The quiz counts only these as answers;
   // the focus also moves on resize and after loads.
   const [sliceInput, setSliceInput] = useState(0);
+  // The open lesson's expert regions (see the overlay effect below).
+  const [overlay, setOverlay] = useState<Overlay | null>(null);
+  const overlayKeys = useRef({ slices: '', models: '' });
   const [timelineOpen, setTimelineOpen] = useState(false);
 
   const [studyKey, setStudyKey] = useState(
@@ -153,9 +165,11 @@ export default function Viewer({
     comparisonCanvas.current = canvas;
     setComparisonReady(!!canvas);
   }, []);
-  // Learning mode is offered on the shipped demo study only (lib/library.ts).
-  const isDemo = studies.find((s) => s.id === studyKey)?.demo === true;
-  const learning = learnOpen && isDemo;
+  // Learning mode is offered on teaching cases only, recognised by archive
+  // hash (lib/library.ts): the demo study and the glioma case.
+  const teachingCase =
+    studies.find((s) => s.id === studyKey)?.teachingCase ?? null;
+  const learning = learnOpen && !!teachingCase;
   const panelOpen = overviewOpen || learning;
   const studyDate = displayDate(
     studies.find((s) => s.id === studyKey)?.date || '',
@@ -188,6 +202,9 @@ export default function Viewer({
   const focusRef = useRef<FocusController | null>(null);
   const pendingBookmark = useRef<Point | null>(null);
   const paletteRef = useRef('silver');
+  // What the loaded volume already shows, so the effects below skip a costly
+  // GPU update (seconds with software WebGL) that would change nothing.
+  const applied = useRef({ palette: '', brightness: 100 });
   useEffect(() => {
     paletteRef.current = palette;
   }, [palette]);
@@ -390,6 +407,7 @@ export default function Viewer({
         for (const nv of [pair.render, pair.slices]) {
           for (const volume of nv.volumes.slice()) nv.removeVolume(volume);
         }
+        overlayKeys.current.slices = '';
         const loads = await Promise.allSettled([
           pair.render.loadVolumes([opts]),
           pair.slices.loadVolumes([opts]),
@@ -401,6 +419,7 @@ export default function Viewer({
           pair.render.volumes[0].id,
           paletteMaps[paletteRef.current],
         );
+        applied.current = { palette: paletteRef.current, brightness: 100 };
         await pair.render.setVolumeRenderIllumination(0.45);
         await pair.render.setGradientOpacity(0.12, 0.06);
         if (!active) return;
@@ -442,6 +461,81 @@ export default function Viewer({
     // A palette change updates only its texture; it must never reload the scan.
   }, [ready, study]);
 
+  // A lesson's expert regions: the label map over the slices and one 3D model
+  // per region. A series load removes the overlay volume, so this re-adds it.
+  useEffect(() => {
+    if (!ready || loading) return;
+    const labels = overlay
+      ? manifest?.series.find((s) => s.id === overlay.seriesId)
+      : undefined;
+    let active = true;
+    loadQueue.current = loadQueue.current
+      .catch(() => {})
+      .then(async () => {
+        const pair = engines.current;
+        if (!active || !pair) return;
+        const keys = overlayKeys.current;
+        const sliceKey = labels ? `${loadedSeriesId.current}:${labels.id}` : '';
+        if (keys.slices !== sliceKey) {
+          for (const v of pair.slices.volumes.slice(1))
+            pair.slices.removeVolume(v);
+          keys.slices = '';
+          if (labels) {
+            await pair.slices.addVolumeFromUrl({
+              url: assetUrl(labels.url),
+              name: `${labels.id}.nii.gz`,
+              opacity: 0.55,
+            });
+            keys.slices = sliceKey;
+          }
+        }
+        const modelKey = labels?.id ?? '';
+        if (keys.models !== modelKey) {
+          while (pair.render.meshes.length)
+            pair.render.removeMesh(pair.render.meshes[0]);
+          keys.models = '';
+          if (labels && overlay) {
+            await pair.render.loadMeshes(
+              (labels.meshes ?? []).flatMap((m) => {
+                const region = overlay.regions.find((r) => r.value === m.value);
+                return region
+                  ? [
+                      {
+                        url: meshUrl(m.url),
+                        name: `region-${m.value}.stl`,
+                        rgba255: modelColor(region),
+                        opacity: region.opacity ?? 1,
+                      },
+                    ]
+                  : [];
+              }),
+            );
+            keys.models = modelKey;
+          }
+        }
+        // Models stay visible through the scan, faintly where it covers them.
+        pair.render.opts.meshXRay = labels ? 0.3 : 0;
+        if (labels && overlay && pair.slices.volumes[1]) {
+          pair.slices.volumes[1].setColormapLabel(
+            labelColormap(overlay.regions, overlay.onSlices),
+          );
+          pair.slices.updateGLVolume();
+          for (const mesh of pair.render.meshes)
+            mesh.visible = overlay.inModels.includes(
+              Number(/region-(\d+)/.exec(mesh.name)?.[1]),
+            );
+        }
+        pair.slices.drawScene();
+        pair.render.drawScene();
+      })
+      .catch(() => {
+        if (active) setToast('The expert outline could not be loaded');
+      });
+    return () => {
+      active = false;
+    };
+  }, [overlay, ready, loading, manifest]);
+
   useEffect(() => {
     const query = window.matchMedia('(max-width: 700px)');
     const update = () => setCompact(query.matches);
@@ -480,8 +574,10 @@ export default function Viewer({
 
   useEffect(() => {
     const nv = engines.current?.render;
-    if (nv?.volumes[0] && !loading)
+    if (nv?.volumes[0] && !loading && applied.current.palette !== palette) {
       nv.setColormap(nv.volumes[0].id, paletteMaps[palette]);
+      applied.current.palette = palette;
+    }
   }, [palette, loading]);
 
   useEffect(() => {
@@ -491,10 +587,11 @@ export default function Viewer({
   }, [cut, depth, axis, ready, loading]);
 
   useEffect(() => {
-    if (loading || !study) return;
+    if (loading || !study || applied.current.brightness === brightness) return;
     const timer = window.setTimeout(() => {
       const nv = engines.current?.render;
       if (!nv?.volumes[0]) return;
+      applied.current.brightness = brightness;
       nv.volumes[0].cal_min = study.displayRange[0];
       nv.volumes[0].cal_max = (study.displayRange[1] * 100) / brightness;
       nv.updateGLVolume();
@@ -793,7 +890,7 @@ export default function Viewer({
               </button>
             </>
           )}
-          {isDemo && (
+          {teachingCase && (
             <button
               className={`header-toggle ${learning ? 'active' : ''}`}
               aria-pressed={learning}
@@ -819,6 +916,7 @@ export default function Viewer({
             <ShieldCheck size={15} />{' '}
             {ONLINE ? 'Runs in your browser' : 'Runs locally'}
           </span>
+          <ThemeToggle />
           <Dialog>
             <DialogTrigger
               className="icon-button"
@@ -880,6 +978,8 @@ export default function Viewer({
         )}
         {learning && (
           <LearnPanel
+            key={teachingCase}
+            caseId={teachingCase}
             series={manifest?.series ?? []}
             point={hasFocus && point ? point.mm : null}
             sliceInput={sliceInput}
@@ -893,6 +993,8 @@ export default function Viewer({
                 setMode('compare');
               } else if (mode !== 'both' && mode !== 'slices') setMode('both');
             }}
+            onOverlay={setOverlay}
+            otherCases={otherCases}
             onClose={() => setLearnOpen(false)}
           />
         )}
@@ -1243,7 +1345,7 @@ export default function Viewer({
               </p>
             </div>
           )}
-          <div className={`scan-stage mode-${mode}`}>
+          <div className={`scan-stage mri-stage mode-${mode}`}>
             <div
               className="render-pane"
               style={{

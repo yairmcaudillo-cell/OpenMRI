@@ -22,6 +22,7 @@ const draft = { status: 'draft' };
 const lesson = () => ({
   id: 'brain-basics',
   kind: 'landmarks',
+  case: 'jane',
   order: 1,
   tracks: ['undergrad', 'med'],
   title: { undergrad: 'Basics', med: 'Basics' },
@@ -146,6 +147,8 @@ test('each rule rejects its broken case with a readable message', () => {
     [(l) => (l.kind = 'sequence-compare'), /names compareSeries/],
     [(l) => delete l.review, /review is missing/],
     [(l) => (l.order = 0), /order must be a whole number/],
+    [(l) => (l.case = 'bob'), /case must be one of jane, glioma/],
+    [(l) => delete l.case, /case must be one of jane, glioma/],
   ];
   for (const [change, pattern] of cases) expectError(broken(change), pattern);
 });
@@ -200,6 +203,13 @@ test('the catalogue catches unknown glossary terms and duplicate lessons', () =>
     L.validateCatalog([lesson(), { ...lesson(), id: 'other' }], glossary),
     /same order/,
   );
+  assert.deepEqual(
+    L.validateCatalog(
+      [lesson(), { ...lesson(), id: 'other', case: 'glioma' }],
+      glossary,
+    ),
+    [],
+  );
   expectError(
     L.validateCatalog([lesson()], [...glossary, ...glossary]),
     /id used twice/,
@@ -237,9 +247,11 @@ test('track helpers show each track only its own lessons, landmarks and question
     ['find-thalamus'],
   );
   assert.deepEqual(
-    L.lessonsFor([l, { ...l, id: 'm', tracks: ['med'] }], 'undergrad').map(
-      (x) => x.id,
-    ),
+    L.lessonsFor(
+      [l, { ...l, id: 'm', tracks: ['med'] }],
+      'undergrad',
+      'jane',
+    ).map((x) => x.id),
     ['brain-basics'],
   );
 });
@@ -315,4 +327,69 @@ test('lessons:check fails on a broken lesson and on a misnamed file', () => {
   assert.equal(r.status, 1);
   assert.match(r.stderr, /file name must be the lesson id/);
   fs.rmSync(dir, { recursive: true });
+});
+
+/** A lesson on the glioma case with expert regions. */
+const pathology = () => ({
+  ...lesson(),
+  id: 'glioma',
+  case: 'glioma',
+  referenceSeries: '03 T1 +C',
+  labelSeries: '05 Tumour labels (expert)',
+  regions: [
+    { value: 1, name: 'Edema', color: '#facc15' },
+    { value: 3, name: 'Enhancing tumour', color: '#3b82f6' },
+  ],
+  source: {
+    text: 'Medical Segmentation Decathlon, BRATS_449',
+    url: 'https://medicaldecathlon.com',
+    license: 'CC BY-SA 4.0',
+  },
+  landmarks: [{ ...lesson().landmarks[0], region: 3 }],
+  questions: [],
+});
+
+test('lessons with expert regions are validated', () => {
+  assert.deepEqual(L.validateLesson(pathology()), []);
+  const cases = [
+    [(l) => delete l.labelSeries, /regions need a labelSeries/],
+    [(l) => (l.regions[1].value = 1), /region value 1 is used twice/],
+    [(l) => (l.regions[0].color = 'yellow'), /colour must be #rrggbb/],
+    [(l) => (l.regions[0].name = ''), /region needs a name/],
+    [(l) => (l.regions[0].opacity = 0), /region 1 opacity must be 0.1 to 1/],
+    [
+      (l) => (l.landmarks[0].region = 2),
+      /region 2 is not one of the lesson's regions/,
+    ],
+    [(l) => delete l.source.license, /source needs text, url and license/],
+    [(l) => (l.source.url = 'javascript:alert(1)'), /source url must be https/],
+  ];
+  for (const [change, pattern] of cases) {
+    const l = pathology();
+    change(l);
+    expectError(L.validateLesson(l), pattern);
+  }
+});
+
+test('each case sees only its own lessons', () => {
+  const both = [lesson(), pathology()];
+  assert.deepEqual(
+    L.lessonsFor(both, 'med', 'jane').map((l) => l.id),
+    ['brain-basics'],
+  );
+  assert.deepEqual(
+    L.lessonsFor(both, 'med', 'glioma').map((l) => l.id),
+    ['glioma'],
+  );
+});
+
+test('label colours show only the chosen regions', () => {
+  const { regions } = pathology();
+  const cm = L.labelColormap([...regions].reverse(), [3]);
+  assert.deepEqual(cm.I, [0, 1, 3]);
+  assert.deepEqual(cm.R, [0, 0xfa, 0x3b]);
+  assert.deepEqual(cm.G, [0, 0xcc, 0x82]);
+  assert.deepEqual(cm.B, [0, 0x15, 0xf6]);
+  assert.deepEqual(cm.A, [0, 0, 255]);
+  assert.deepEqual(L.modelColor(regions[1]), [0x3b, 0x82, 0xf6, 255]);
 });

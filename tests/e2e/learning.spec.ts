@@ -28,8 +28,8 @@ async function expectFocusAt(page: Page, point: number[]) {
         const at = await readout(page);
         return Math.max(...at.map((v, i) => Math.abs(v - point[i])));
       },
-      { timeout: 30_000 },
-    ) // a series switch reloads the volume first
+      { timeout: 60_000 },
+    ) // a series switch reloads the volume first: tens of seconds with software WebGL
     .toBeLessThanOrEqual(1);
 }
 

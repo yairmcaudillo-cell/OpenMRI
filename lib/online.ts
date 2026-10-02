@@ -16,7 +16,12 @@ export function volumeUrl(url: string) {
 /** Where a study manifest is loaded from. */
 export const studyUrl = (id: string) =>
   ONLINE
-    ? `${base()}data/study.json`
+    ? `${base()}data/studies/${encodeURIComponent(id)}.json`
     : `/api/library/studies/${encodeURIComponent(id)}`;
-/** The online demo's patient and study list. */
+/** Where a 3D model (STL) of a label-map region is loaded from. */
+export function meshUrl(url: string) {
+  if (ONLINE) return `${base()}data/meshes/${url.split('/').pop()}.stl`;
+  return url;
+}
+/** The online demo's patients and studies (the teaching cases). */
 export const demoCatalogUrl = () => `${base()}data/demo.json`;

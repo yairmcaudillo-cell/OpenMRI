@@ -24,17 +24,21 @@ async function waitFor(id: string, status: string) {
   throw new Error(`Import did not reach ${status}`);
 }
 
+/** The glioma case needs the internet the first time (it is then cached). */
+export const GLIOMA = process.env.OPENMRI_OFFLINE !== '1';
+
 /**
- * Loads the demo study, and a small synthetic NIfTI study so tests can check
- * that learning mode stays off on anything that is not the demo. Both go into
- * the test server's own data directory.
+ * Loads the teaching cases (the demo study and, online, the glioma case), and
+ * a small synthetic NIfTI study so tests can check that learning mode stays
+ * off on anything else. All go into the test server's own data directory.
  */
 export default async function globalSetup() {
-  execFileSync('node', ['scripts/demo.mjs', '--no-open'], {
-    env: { ...process.env, OPENMRI_PORT: '4174' },
-    stdio: 'inherit',
-    timeout: 900_000,
-  });
+  for (const args of [[], ...(GLIOMA ? [['--case', 'glioma']] : [])])
+    execFileSync('node', ['scripts/demo.mjs', '--no-open', ...args], {
+      env: { ...process.env, OPENMRI_PORT: '4174' },
+      stdio: 'inherit',
+      timeout: 900_000,
+    });
   const library = await api('/api/library');
   const patients = library.patients as { name: string }[];
   if (patients.some((p) => p.name === SYNTHETIC_PATIENT)) return;

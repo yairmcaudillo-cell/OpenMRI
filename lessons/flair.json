@@ -1,6 +1,7 @@
 {
   "id": "flair",
   "kind": "sequence-compare",
+  "case": "jane",
   "order": 5,
   "tracks": ["undergrad", "med"],
   "title": {

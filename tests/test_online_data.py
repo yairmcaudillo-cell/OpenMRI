@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 import sys
 import tempfile
 import unittest
@@ -12,8 +13,9 @@ from build_online_data import DEMO_SHA256, MAX_BYTES, build
 sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
 
 
+@unittest.skipIf(os.environ.get('OPENMRI_OFFLINE') == '1', 'the glioma case needs the internet')
 class OnlineDataTests(unittest.TestCase):
-    """The online demo publishes the demo study and nothing else."""
+    """The online demo publishes the two teaching cases and nothing else."""
 
     @classmethod
     def setUpClass(cls):
@@ -25,26 +27,37 @@ class OnlineDataTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.temp.cleanup()
 
-    def test_only_the_demo_archive_is_used(self):
+    def test_the_demo_archive_is_the_published_one(self):
         self.assertEqual(sha(ROOT / 'demo' / 'jane-head-mri.zip'), DEMO_SHA256)
 
-    def test_manifest_lists_every_published_volume_with_its_hash(self):
-        manifest = json.loads((self.out / 'study.json').read_text())
-        self.assertEqual(len(manifest['series']), 18)
-        published = sorted(p.name for p in (self.out / 'volumes').iterdir())
-        self.assertEqual(published, sorted(f"{s['id']}.nii.gz" for s in manifest['series']))
-        for s in manifest['series']:
-            self.assertEqual(sha(self.out / 'volumes' / f"{s['id']}.nii.gz"), s['sha256'])
-        self.assertIn('02 Axial MPRAGE', [s['originalSeriesDescription'] for s in manifest['series']])
+    def catalogue(self):
+        return json.loads((self.out / 'demo.json').read_text())
 
-    def test_catalogue_has_one_demo_study_and_no_personal_details(self):
-        catalogue = json.loads((self.out / 'demo.json').read_text())
-        self.assertEqual(catalogue['patient']['name'], 'Jane')
-        self.assertEqual(catalogue['patient']['birth_date'], '')
-        self.assertEqual(len(catalogue['studies']), 1)
-        self.assertTrue(catalogue['studies'][0]['demo'])
+    def test_every_study_manifest_lists_its_published_volumes_and_meshes(self):
+        published = sorted(p.name for p in (self.out / 'volumes').iterdir())
+        listed, meshes = [], []
+        for study in self.catalogue()['studies']:
+            manifest = json.loads((self.out / 'studies' / f"{study['id']}.json").read_text())
+            for s in manifest['series']:
+                listed.append(f"{s['id']}.nii.gz")
+                self.assertEqual(sha(self.out / 'volumes' / f"{s['id']}.nii.gz"), s['sha256'])
+                meshes += [m['url'].rsplit('/', 1)[1] for m in s.get('meshes', [])]
+        self.assertEqual(published, sorted(listed))
+        self.assertEqual(len(listed), 18 + 5)
+        self.assertEqual(sorted(p.name for p in (self.out / 'meshes').iterdir()), sorted(f'{m}.stl' for m in meshes))
+        self.assertEqual(len(meshes), 3)
+
+    def test_catalogue_has_the_two_teaching_cases_and_no_personal_details(self):
+        catalogue = self.catalogue()
+        names = sorted(p['name'] for p in catalogue['patients'])
+        self.assertEqual(names, ['Glioma teaching case', 'Jane'])
+        self.assertTrue(all(p['birth_date'] == '' for p in catalogue['patients']))
+        self.assertEqual(sorted(s['teachingCase'] for s in catalogue['studies']), ['glioma', 'jane'])
         files = sorted(str(p.relative_to(self.out)) for p in self.out.rglob('*') if p.is_file())
-        self.assertEqual([f for f in files if not f.startswith('volumes/')], ['demo.json', 'study.json'])
+        self.assertEqual(
+            [f for f in files if not f.startswith(('volumes/', 'meshes/', 'studies/'))],
+            ['demo.json'],
+        )
 
     def test_size_stays_within_budget(self):
         total = sum(p.stat().st_size for p in self.out.rglob('*') if p.is_file())

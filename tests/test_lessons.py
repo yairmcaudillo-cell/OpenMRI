@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 import tempfile
 import unittest
@@ -29,6 +30,21 @@ class LessonGeometryTests(unittest.TestCase):
             problems = check(directory)
         self.assertTrue(any('midbrain' in p and 'outside the head' in p for p in problems), problems)
         self.assertTrue(any('"99 Missing series" is not in the demo' in p for p in problems), problems)
+
+
+    @unittest.skipIf(os.environ.get('OPENMRI_OFFLINE') == '1', 'needs the glioma case')
+    def test_landmarks_must_lie_in_the_region_they_name(self):
+        lesson = json.loads((ROOT / 'lessons' / 'glioma.json').read_text())
+        rim = next(l for l in lesson['landmarks'] if l['id'] == 'enhancing-rim')
+        rim['region'] = 1
+        core = next(l for l in lesson['landmarks'] if l['id'] == 'core')
+        core['point'] = [107, 112, 89]  # the ventricle, outside every region
+        with tempfile.TemporaryDirectory() as directory:
+            (Path(directory) / 'glioma.json').write_text(json.dumps(lesson))
+            problems = check(directory)
+        self.assertTrue(any('enhancing-rim' in p and 'in region 3, not region 1' in p for p in problems), problems)
+        self.assertTrue(any('core' in p and 'in region 0, not region 2' in p for p in problems), problems)
+        self.assertEqual(len(problems), 2, problems)
 
 
 if __name__ == '__main__':

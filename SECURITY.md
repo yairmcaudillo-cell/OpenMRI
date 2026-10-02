@@ -7,7 +7,8 @@ Do not put it behind a reverse proxy, a tunnel, or a port forward.
 ## Online demo
 
 The online demo (`docs/online/README.md`) is a separate static build, not this
-server. It contains only the demo study and the lessons, has no import and no
+server. It contains only the teaching cases (the demo study and the public
+glioma case) and the lessons, has no import and no
 server code, and its Content Security Policy allows connections only to its
 own site. Report problems with it the same way as with the app.
 
@@ -20,7 +21,11 @@ makes no network requests while running.
 The only scan in the repository is the demo study in `demo/`, published with
 the consent of the person scanned. Its headers were reduced to geometry; the
 face was left in on purpose. See [demo/README.md](demo/README.md). The banner and the intro clip are generated
-illustrations, and the tests build synthetic DICOM and NIfTI data.
+illustrations, and the tests build synthetic DICOM and NIfTI data. The glioma
+teaching case is not in the repository: `npm run demo:pathology` and the
+online build download it from the public Medical Segmentation Decathlon
+archive (CC BY-SA 4.0) and check it against fixed fingerprints. That download
+is a setup step; the app itself still makes no network requests.
 
 When you report a problem, never attach real scans, DICOM headers, worker
 logs with patient names, screenshots that show patient details, or your

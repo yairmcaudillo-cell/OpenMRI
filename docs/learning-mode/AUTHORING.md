@@ -53,6 +53,33 @@ npm run demo       # starts the app with the demo study
 6. **Look at it in the app.** `npm run build && npm run up`, then open
    **Learn**. Content is bundled at build time.
 
+## Lessons on the glioma case
+
+Every lesson names its teaching case: `"case": "jane"` (the demo study) or
+`"case": "glioma"` (`npm run demo:pathology`). The panel lists only the open
+case's lessons, and `order` is counted per case. A lesson on the glioma case
+can show the expert regions of a label map:
+
+```json
+"labelSeries": "05 Tumour labels (expert)",
+"regions": [
+  { "value": 1, "name": "Edema", "color": "#facc15", "opacity": 0.35 },
+  { "value": 3, "name": "Enhancing tumour", "color": "#3b82f6" }
+],
+"source": {
+  "text": "Medical Segmentation Decathlon, BRATS_449 (Simpson et al. 2019)",
+  "url": "https://medicaldecathlon.com",
+  "license": "CC BY-SA 4.0"
+}
+```
+
+`value` is the number in the label map, `opacity` that of the region's 3D
+model. A landmark may add `"region": 3`; the geometry check then requires its
+point to lie in that region of the label map. Third-party data always needs a
+`source`. Write about how these findings look in general: never a diagnosis,
+grade or prognosis for the person scanned, and do not name the tumour's side
+until the reviewer has confirmed the orientation.
+
 ## Review
 
 Every item starts as `{ "status": "draft" }` and shows **Draft, not
@@ -63,6 +90,8 @@ with this checklist:
 - [ ] The anatomy there looks typical, away from the operated area.
 - [ ] The text is correct, and right for each track's level.
 - [ ] Clinical notes are general knowledge and never describe this scan.
+- [ ] Glioma case: the outline colours match the legend, the left–right
+      orientation of the case is confirmed, and no text reads as a diagnosis.
 - [ ] Choice questions have exactly one right answer.
 
 Then, and only then, the item gets:

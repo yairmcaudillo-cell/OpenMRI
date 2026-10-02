@@ -30,11 +30,11 @@ test('only the imported demo study is flagged as the demo', async ({
   const nameOf = (id: string) =>
     library.patients.find((p: { id: string }) => p.id === id).name;
   const flags = library.studies.map(
-    (s: { patient_id: string; demo: boolean }) => [
+    (s: { patient_id: string; teachingCase: string | null }) => [
       nameOf(s.patient_id),
-      s.demo,
+      s.teachingCase,
     ],
   );
-  expect(flags).toContainEqual(['Jane', true]);
-  expect(flags).toContainEqual([SYNTHETIC_PATIENT, false]);
+  expect(flags).toContainEqual(['Jane', 'jane']);
+  expect(flags).toContainEqual([SYNTHETIC_PATIENT, null]);
 });
